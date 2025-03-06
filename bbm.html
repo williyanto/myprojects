@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Pengisian BBM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        body {
+            background-color: #eef2f7;
+            font-family: 'Poppins', sans-serif;
+        }
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+            margin-top: 30px;
+        }
+        h2 {
+            color: #34495e;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-label {
+            font-weight: 600;
+        }
+        .riwayat-item {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .riwayat-item p {
+            margin: 5px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #666;
+        }
+        .laporan {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f1f1f1;
+            border-radius: 8px;
+        }
+        .laporan h4 {
+            margin-bottom: 15px;
+        }
+        .export-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Monitoring Pengisian BBM</h2>
+        <!-- Form Input -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Jenis Kendaraan</label>
+                <select class="form-control" id="jenisKendaraan">
+                    <option>Motor</option>
+                    <option>Mobil</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Odometer Sekarang (Km)</label>
+                <input type="number" class="form-control" id="odoMeterSekarang" step="1">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label">SPBU</label>
+                <select class="form-control" id="spbu">
+                    <option>Pertamina</option>
+                    <option>Shell</option>
+                    <option>BP AKR</option>
+                    <option>Vivo</option>
+                    <option>Exxon Mobil</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Jenis BBM</label>
+                <select class="form-control" id="jenisBBM">
+                    <option>RON 89</option>
+                    <option>RON 90</option>
+                    <option>RON 92</option>
+                    <option>RON 95</option>
+                    <option>RON 98</option>
+                    <option>Solar</option>
+                    <option>Bio Solar</option>
+                    <option>Dexlite</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Tanggal Pengisian</label>
+                <input type="date" class="form-control" id="tanggalPengisian">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label">Jumlah BBM (Liter)</label>
+                <input type="number" class="form-control" id="jumlahBBM" step="0.01" oninput="hitungTotalHarga()">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Harga per Liter (IDR)</label>
+                <input type="text" class="form-control" id="hargaPerLiter" oninput="formatHarga(this); hitungTotalHarga()">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Total Harga (IDR)</label>
+                <input type="text" class="form-control" id="totalHarga" readonly>
+            </div>
+        </div>
+        <div class="mb-3 form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="tangkiPenuh">
+            <label class="form-check-label" for="tangkiPenuh">Tangki Penuh?</label>
+        </div>
+        <button type="button" class="btn btn-primary w-100" onclick="tambahPengisian()">Tambahkan</button>
+        <button type="button" class="btn btn-danger w-100 mt-3" onclick="hapusRiwayat()">Hapus Semua Riwayat</button>
+        <!-- Riwayat Pengisian -->
+        <div class="mt-4">
+            <h4>Riwayat Pengisian</h4>
+            <div id="riwayatList"></div>
+        </div>
+        <!-- Laporan -->
+        <div class="laporan">
+            <h4>Laporan Pengisian BBM</h4>
+            <div id="laporan"></div>
+        </div>
+        <!-- Tombol Ekspor -->
+        <div class="export-buttons">
+            <button type="button" class="btn btn-success" onclick="eksporKeExcel()">Ekspor ke Excel</button>
+            <button type="button" class="btn btn-warning" onclick="eksporKePDF()">Ekspor ke PDF</button>
+        </div>
+        <!-- Footer -->
+        <div class="footer">
+            <p>Copyright &copy; Williyanto Adi 2025 | Versi Aplikasi 1.00.25</p>
+        </div>
+    </div>
+    <script>
+        // Ambil data dari Local Storage atau inisialisasi array kosong
+        let riwayat = JSON.parse(localStorage.getItem('riwayatPengisian')) || [];
+
+        // Set tanggal pengisian secara otomatis saat halaman dimuat
+        document.addEventListener("DOMContentLoaded", function() {
+            let now = new Date();
+            let formattedDate = now.toISOString().slice(0, 10); // Format YYYY-MM-DD
+            document.getElementById('tanggalPengisian').value = formattedDate;
+            tampilkanRiwayat(); // Tampilkan riwayat yang tersimpan
+            tampilkanLaporan(); // Tampilkan laporan
+        });
+
+        // Format harga per liter (misal: 15000 -> 15.000)
+        function formatHarga(input) {
+            let value = input.value.replace(/\D/g, '');
+            input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        // Hitung total harga berdasarkan jumlah BBM dan harga per liter
+        function hitungTotalHarga() {
+            let jumlahBBM = parseFloat(document.getElementById('jumlahBBM').value) || 0;
+            let hargaPerLiter = parseFloat(document.getElementById('hargaPerLiter').value.replace(/\./g, '')) || 0;
+            let totalHarga = jumlahBBM * hargaPerLiter;
+            document.getElementById('totalHarga').value = totalHarga.toLocaleString('id-ID');
+        }
+
+        // Validasi input sebelum menambahkan data
+        function validasiInput() {
+            let odoMeter = document.getElementById('odoMeterSekarang').value;
+            let jumlahBBM = document.getElementById('jumlahBBM').value;
+            let hargaPerLiter = document.getElementById('hargaPerLiter').value;
+            if (!odoMeter || !jumlahBBM || !hargaPerLiter) {
+                alert("Harap isi semua field!");
+                return false;
+            }
+            return true;
+        }
+
+        // Reset form setelah data ditambahkan
+        function resetForm() {
+            document.getElementById('odoMeterSekarang').value = '';
+            document.getElementById('jumlahBBM').value = '';
+            document.getElementById('hargaPerLiter').value = '';
+            document.getElementById('totalHarga').value = '';
+            document.getElementById('tangkiPenuh').checked = false;
+        }
+
+        // Format tanggal ke DD-MM-YYYY
+        function formatTanggal(tanggal) {
+            let [tahun, bulan, hari] = tanggal.split('-');
+            return `${hari}-${bulan}-${tahun}`;
+        }
+
+        // Tambahkan data pengisian ke riwayat dan simpan ke Local Storage
+        function tambahPengisian() {
+            if (!validasiInput()) return;
+
+            let data = {
+                tanggal: formatTanggal(document.getElementById('tanggalPengisian').value), // Format tanggal
+                jenisKendaraan: document.getElementById('jenisKendaraan').value,
+                odoMeter: document.getElementById('odoMeterSekarang').value,
+                spbu: document.getElementById('spbu').value,
+                jenisBBM: document.getElementById('jenisBBM').value,
+                jumlahBBM: document.getElementById('jumlahBBM').value,
+                hargaPerLiter: document.getElementById('hargaPerLiter').value,
+                totalHarga: document.getElementById('totalHarga').value,
+                tangkiPenuh: document.getElementById('tangkiPenuh').checked ? "Ya" : "Tidak"
+            };
+
+            riwayat.push(data); // Tambahkan data ke array riwayat
+            localStorage.setItem('riwayatPengisian', JSON.stringify(riwayat)); // Simpan ke Local Storage
+            tampilkanRiwayat(); // Tampilkan riwayat terbaru
+            tampilkanLaporan(); // Tampilkan laporan terbaru
+            resetForm(); // Reset form input
+        }
+
+        // Tampilkan riwayat pengisian dari Local Storage
+        function tampilkanRiwayat() {
+            let riwayatList = document.getElementById('riwayatList');
+            riwayatList.innerHTML = ''; // Kosongkan riwayat sebelum menampilkan data baru
+            riwayat.forEach((data, index) => {
+                let riwayatItem = document.createElement('div');
+                riwayatItem.className = 'riwayat-item';
+                riwayatItem.innerHTML = `
+                    <p><strong>Jenis Kendaraan:</strong> ${data.jenisKendaraan}</p>
+                    <p><strong>Odometer:</strong> ${data.odoMeter} Km</p>
+                    <p><strong>SPBU:</strong> ${data.spbu}</p>
+                    <p><strong>Jenis BBM:</strong> ${data.jenisBBM}</p>
+                    <p><strong>Tanggal Pengisian:</strong> ${data.tanggal}</p>
+                    <p><strong>Jumlah BBM:</strong> ${data.jumlahBBM} Liter</p>
+                    <p><strong>Harga per Liter:</strong> Rp ${data.hargaPerLiter}</p>
+                    <p><strong>Total Harga:</strong> Rp ${data.totalHarga}</p>
+                    <p><strong>Tangki Penuh:</strong> ${data.tangkiPenuh}</p>
+                    <button class="btn btn-sm btn-danger" onclick="hapusRiwayatItem(${index})">Hapus</button>
+                `;
+                riwayatList.appendChild(riwayatItem);
+            });
+        }
+
+        // Tampilkan laporan pengisian BBM
+        function tampilkanLaporan() {
+            let laporan = document.getElementById('laporan');
+            let totalBBM = 0;
+            let totalHarga = 0;
+            let totalJarak = 0;
+
+            // Hitung total BBM, total harga, dan total jarak
+            riwayat.forEach((data, index) => {
+                totalBBM += parseFloat(data.jumlahBBM);
+                totalHarga += parseFloat(data.totalHarga.replace(/\./g, ''));
+
+                // Hitung jarak tempuh jika ada data sebelumnya
+                if (index > 0) {
+                    let jarak = data.odoMeter - riwayat[index - 1].odoMeter;
+                    totalJarak += jarak;
+                }
+            });
+
+            // Hitung konsumsi BBM per km/liter dan rata-rata konsumsi
+            let konsumsiBBM = (totalJarak / totalBBM).toFixed(2);
+            let rataRataKonsumsi = (totalJarak / totalBBM).toFixed(2);
+
+            laporan.innerHTML = `
+                <p><strong>Total Jumlah BBM:</strong> ${totalBBM.toFixed(2)} Liter</p>
+                <p><strong>Total Pengeluaran:</strong> Rp ${totalHarga.toLocaleString('id-ID')}</p>
+                <p><strong>Konsumsi BBM:</strong> ${konsumsiBBM} km/liter</p>
+                <p><strong>Rata-rata Konsumsi BBM:</strong> ${rataRataKonsumsi} km/liter</p>
+            `;
+        }
+
+        // Hapus semua riwayat dari Local Storage
+        function hapusRiwayat() {
+            localStorage.removeItem('riwayatPengisian'); // Hapus data dari Local Storage
+            riwayat = []; // Kosongkan array riwayat
+            tampilkanRiwayat(); // Perbarui tampilan riwayat
+            tampilkanLaporan(); // Perbarui laporan
+        }
+
+        // Hapus satu item riwayat berdasarkan index
+        function hapusRiwayatItem(index) {
+            riwayat.splice(index, 1); // Hapus item dari array
+            localStorage.setItem('riwayatPengisian', JSON.stringify(riwayat)); // Simpan perubahan ke Local Storage
+            tampilkanRiwayat(); // Perbarui tampilan riwayat
+            tampilkanLaporan(); // Perbarui laporan
+        }
+
+        // Ekspor data ke Excel dengan format tabel (Ctrl+T) tanpa tombol filter
+        function eksporKeExcel() {
+            const data = riwayat.map(item => ({
+                Tanggal: item.tanggal,
+                "Jenis Kendaraan": item.jenisKendaraan,
+                "Odometer (Km)": item.odoMeter,
+                SPBU: item.spbu,
+                "Jenis BBM": item.jenisBBM,
+                "Jumlah BBM (L)": item.jumlahBBM,
+                "Harga per Liter (IDR)": item.hargaPerLiter,
+                "Total Harga (IDR)": item.totalHarga,
+                "Tangki Penuh": item.tangkiPenuh
+            }));
+
+            // Buat worksheet
+            const worksheet = XLSX.utils.json_to_sheet(data);
+
+            // Tentukan range data
+            const range = XLSX.utils.decode_range(worksheet["!ref"]);
+            const startCell = XLSX.utils.encode_cell({ r: range.s.r, c: range.s.c });
+            const endCell = XLSX.utils.encode_cell({ r: range.e.r, c: range.e.c });
+
+            // Tambahkan tabel terstruktur (Ctrl+T) tanpa tombol filter
+            worksheet["!autofilter"] = null; // Hapus tombol filter
+            worksheet["!table"] = {
+                ref: `${startCell}:${endCell}`,
+                displayName: "RiwayatPengisian",
+                name: "RiwayatPengisian",
+                columns: [
+                    { name: "Tanggal" },
+                    { name: "Jenis Kendaraan" },
+                    { name: "Odometer (Km)" },
+                    { name: "SPBU" },
+                    { name: "Jenis BBM" },
+                    { name: "Jumlah BBM (L)" },
+                    { name: "Harga per Liter (IDR)" },
+                    { name: "Total Harga (IDR)" },
+                    { name: "Tangki Penuh" }
+                ],
+                style: {
+                    theme: "TableStyleMedium2", // Gaya tabel (bisa diganti)
+                    showFirstColumn: false,
+                    showLastColumn: false,
+                    showRowStripes: true,
+                    showColumnStripes: false
+                }
+            };
+
+            // Atur lebar kolom otomatis
+            for (let C = range.s.c; C <= range.e.c; C++) {
+                let maxWidth = 0;
+                for (let R = range.s.r; R <= range.e.r; R++) {
+                    const cell = worksheet[XLSX.utils.encode_cell({ r: R, c: C })];
+                    if (cell && cell.v) {
+                        const cellWidth = cell.v.toString().length;
+                        if (cellWidth > maxWidth) maxWidth = cellWidth;
+                    }
+                }
+                worksheet["!cols"] = worksheet["!cols"] || [];
+                worksheet["!cols"][C] = { wch: maxWidth + 2 }; // Tambahkan padding
+            }
+
+            // Buat workbook dan simpan file
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "RiwayatPengisian");
+
+            // Tambahkan metadata
+            workbook.Props = {
+                Title: "Riwayat Pengisian BBM",
+                Author: "Williyanto Adi",
+                CreatedDate: new Date()
+            };
+
+            XLSX.writeFile(workbook, "Riwayat_Pengisian_BBM.xlsx");
+        }
+
+        // Ekspor data ke PDF
+        function eksporKePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Judul
+            doc.setFontSize(18);
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(40, 40, 40);
+            doc.text("Laporan Pengisian BBM", 10, 10);
+
+            // Subjudul
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(100, 100, 100);
+            doc.text("Berikut adalah riwayat pengisian BBM kendaraan Anda.", 10, 20);
+
+            // Data untuk tabel
+            const columns = [
+                { title: "Tanggal", dataKey: "tanggal" },
+                { title: "Jenis Kendaraan", dataKey: "jenisKendaraan" },
+                { title: "Odometer (Km)", dataKey: "odoMeter" },
+                { title: "SPBU", dataKey: "spbu" },
+                { title: "Jenis BBM", dataKey: "jenisBBM" },
+                { title: "Jumlah BBM (L)", dataKey: "jumlahBBM" },
+                { title: "Harga per Liter (IDR)", dataKey: "hargaPerLiter" },
+                { title: "Total Harga (IDR)", dataKey: "totalHarga" },
+                { title: "Tangki Penuh", dataKey: "tangkiPenuh" }
+            ];
+
+            const rows = riwayat.map(item => ({
+                tanggal: item.tanggal,
+                jenisKendaraan: item.jenisKendaraan,
+                odoMeter: item.odoMeter,
+                spbu: item.spbu,
+                jenisBBM: item.jenisBBM,
+                jumlahBBM: item.jumlahBBM,
+                hargaPerLiter: item.hargaPerLiter,
+                totalHarga: item.totalHarga,
+                tangkiPenuh: item.tangkiPenuh
+            }));
+
+            // Buat tabel dengan autoTable
+            doc.autoTable({
+                head: [columns.map(col => col.title)],
+                body: rows.map(row => columns.map(col => row[col.dataKey])),
+                startY: 30, // Mulai tabel di posisi Y = 30
+                theme: "striped", // Tema tabel
+                styles: {
+                    fontSize: 10,
+                    cellPadding: 2,
+                    halign: "center",
+                    valign: "middle"
+                },
+                headStyles: {
+                    fillColor: [41, 128, 185], // Warna header
+                    textColor: [255, 255, 255], // Warna teks header
+                    fontStyle: "bold"
+                },
+                columnStyles: {
+                    0: { halign: "left" }, // Kolom Tanggal rata kiri
+                    1: { halign: "left" }, // Kolom Jenis Kendaraan rata kiri
+                    6: { halign: "right" }, // Kolom Harga per Liter rata kanan
+                    7: { halign: "right" }  // Kolom Total Harga rata kanan
+                }
+            });
+
+            // Footer
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text("Williyanto Adi 2025", 10, doc.internal.pageSize.height - 10);
+
+            // Simpan file PDF
+            doc.save("Laporan_Pengisian_BBM.pdf");
+        }
+    </script>
+</body>
+</html>
