@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Converter Faktor Koreksi Suhu IEC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f7fafc;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            font-weight: 400;
+        }
+        .container-center {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .main-card {
+            width: 100%;
+            max-width: 370px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px #cfe2ff36;
+            padding: 2rem 1.3rem 1.3rem 1.3rem;
+            background: #fff;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 510px;
+        }
+        .main-title {
+            font-size: 1.18rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            color: #0560fa;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        .main-title span {
+            font-weight: 400;
+        }
+        .material-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.2rem;
+        }
+        .btn-material {
+            flex: 1 1 0;
+            border: 1.2px solid #e0e7ef;
+            font-weight: 400;
+            border-radius: 10px;
+            font-size: 0.98rem;
+            padding: 0.7rem 0.2rem;
+            transition: background .17s, color .17s, border .14s;
+        }
+        #cuBtn {
+            background: #e3f4fc;
+            color: #0ea5e9;
+            border-color: #bae6fd;
+        }
+        #cuBtn.active, #cuBtn:focus {
+            background: #0ea5e9;
+            color: #fff;
+            border-color: #0ea5e9;
+        }
+        #cuBtn:not(.active):hover {
+            background: #bae6fd;
+            color: #0ea5e9;
+        }
+
+        #alBtn {
+            background: #f3f4f6;
+            color: #64748b;
+            border-color: #d1d5db;
+        }
+        #alBtn.active, #alBtn:focus {
+            background: #64748b;
+            color: #fff;
+            border-color: #64748b;
+        }
+        #alBtn:not(.active):hover {
+            background: #d1d5db;
+            color: #64748b;
+        }
+
+        #tcuBtn {
+            background: #fef9c3;
+            color: #ca8a04;
+            border-color: #fde68a;
+        }
+        #tcuBtn.active, #tcuBtn:focus {
+            background: #ca8a04;
+            color: #fff;
+            border-color: #ca8a04;
+        }
+        #tcuBtn:not(.active):hover {
+            background: #fde68a;
+            color: #ca8a04;
+        }
+
+        #iecBtn {
+            background: #f0fdf4;
+            color: #22c55e;
+            border-color: #bbf7d0;
+        }
+        #iecBtn.active, #iecBtn:focus {
+            background: #22c55e;
+            color: #fff;
+            border-color: #22c55e;
+        }
+        #iecBtn:not(.active):hover {
+            background: #bbf7d0;
+            color: #22c55e;
+        }
+
+        /* DARK MODE STYLES */
+        body.dark-mode {
+            background: #121826;
+        }
+        .dark-mode .main-card {
+            background: #232e42;
+            box-shadow: 0 4px 16px #0000004d;
+        }
+        .dark-mode .main-title {
+            color: #60a5fa;
+        }
+        .dark-mode label,
+        .dark-mode .footer {
+            color: #b8c1d6 !important;
+        }
+        .dark-mode .btn-material {
+            border-color: #374151 !important;
+        }
+        .dark-mode #cuBtn {
+            background: #0a3242;
+            color: #3fd8fc;
+            border-color: #0ea5e9;
+        }
+        .dark-mode #cuBtn.active, .dark-mode #cuBtn:focus {
+            background: #0ea5e9;
+            color: #fff;
+            border-color: #0ea5e9;
+        }
+        .dark-mode #alBtn {
+            background: #1e293b;
+            color: #cbd5e1;
+            border-color: #64748b;
+        }
+        .dark-mode #alBtn.active, .dark-mode #alBtn:focus {
+            background: #64748b;
+            color: #fff;
+            border-color: #64748b;
+        }
+        .dark-mode #tcuBtn {
+            background: #624a09;
+            color: #fde68a;
+            border-color: #fde68a;
+        }
+        .dark-mode #tcuBtn.active, .dark-mode #tcuBtn:focus {
+            background: #ca8a04;
+            color: #fff;
+            border-color: #ca8a04;
+        }
+        .dark-mode #iecBtn {
+            background: #052e16;
+            color: #86efac;
+            border-color: #22c55e;
+        }
+        .dark-mode #iecBtn.active, .dark-mode #iecBtn:focus {
+            background: #22c55e;
+            color: #fff;
+            border-color: #22c55e;
+        }
+        .dark-mode .select-suhu {
+            background: #232e42;
+            color: #fff;
+            border-color: #374151;
+        }
+        .dark-mode .result-panel {
+            background: #0b1625;
+            border-color: #374151;
+            color: #60a5fa;
+        }
+        .dark-mode .info-panel {
+            color: #b8c1d6;
+        }
+        .dark-mode .footer {
+            color: #374151 !important;
+        }
+        /* END DARK MODE STYLES */
+
+        label {
+            font-size: 0.98rem;
+            margin-bottom: 0.35rem;
+            font-weight: 400;
+        }
+        .select-suhu {
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+        .result-panel {
+            background: #f4faff;
+            border-radius: 8px;
+            border: 1px solid #e3eaf5;
+            font-size: 1.28rem;
+            font-weight: 700;
+            color: #0560fa;
+            text-align: center;
+            padding: 0.81rem;
+            margin-top: 0.8rem;
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.85s cubic-bezier(.4,0,.2,1), transform 0.95s cubic-bezier(.4,0,.2,1);
+            will-change: opacity, transform;
+        }
+        .result-panel.fade {
+            opacity: 0;
+            transform: scale(1.1);
+        }
+        .info-panel {
+            font-size: 0.94rem;
+            color: #7a869a;
+            margin-top: 0.5rem;
+            text-align: center;
+            font-weight: 400;
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.85s, transform 0.95s;
+        }
+        .info-panel.fade {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .footer {
+            margin-top: auto;
+            color: #b5c2d3;
+            font-size: 0.93rem;
+            font-weight: 400;
+            text-align: center;
+            width: 100%;
+        }
+        .darkmode-btn-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 22px;
+        }
+        .btn-darkmode-toggle {
+            width: 32px;
+            height: 32px;
+            background: #f1f5f9;
+            color: #334155;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.1em;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #0001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, color 0.2s;
+            z-index: 2;
+        }
+        .btn-darkmode-toggle:hover {
+            background: #dbeafe;
+            color: #1e293b;
+        }
+        body.dark-mode .btn-darkmode-toggle {
+            background: #232e42;
+            color: #facc15;
+        }
+        body.dark-mode .btn-darkmode-toggle:hover {
+            background: #1e293b;
+            color: #fffde4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-center">
+        <div class="main-card">
+            <div class="main-title">
+                Converter Faktor Koreksi Suhu<br>
+                <span style="font-size:0.93em;">(IEC)</span>
+            </div>
+            <form autocomplete="off">
+                <div class="material-group mb-3">
+                    <button type="button" class="btn btn-material" id="cuBtn">CU</button>
+                    <button type="button" class="btn btn-material" id="alBtn">AL</button>
+                    <button type="button" class="btn btn-material" id="tcuBtn">TCU</button>
+                    <button type="button" class="btn btn-material" id="iecBtn">IEC</button>
+                </div>
+                <label for="temperature" class="mb-1">Suhu (<span style="color:#0560fa;">°C</span>)</label>
+                <select class="form-select select-suhu mb-2" id="temperature"></select>
+                <div class="result-panel" id="faktorKoreksi">—</div>
+                <div class="info-panel" id="materialInfo"></div>
+            </form>
+            <div class="darkmode-btn-container">
+                <button class="btn-darkmode-toggle" id="darkModeToggle" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
+            </div>
+            <div class="footer">
+                &copy; 2025 Converter IEC by Williyanto Adi
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Data suhu dan faktor koreksi berdasarkan spesifikasi terbaru dari user
+        const koreksiMap = {
+            "CU": {
+                "21.0": "0.9961",
+    "21.1": "0.9957",
+    "21.2": "0.9953",
+    "21.3": "0.9949",
+    "21.4": "0.9945",
+    "21.5": "0.9941",
+    "21.6": "0.9938",
+    "21.7": "0.9934",
+    "21.8": "0.9930",
+    "21.9": "0.9926",
+    "22.0": "0.9922",
+    "22.1": "0.9918",
+    "22.2": "0.9914",
+    "22.3": "0.9910",
+    "22.4": "0.9907",
+    "22.5": "0.9903",
+    "22.6": "0.9899",
+    "22.7": "0.9895",
+    "22.8": "0.9891",
+    "22.9": "0.9887",
+    "23.0": "0.9883",
+    "23.1": "0.9880",
+    "23.2": "0.9876",
+    "23.3": "0.9872",
+    "23.4": "0.9868",
+    "23.5": "0.9864",
+    "23.6": "0.9861",
+    "23.7": "0.9857",
+    "23.8": "0.9853",
+    "23.9": "0.9849",
+    "24.0": "0.9845",
+    "24.1": "0.9841",
+    "24.2": "0.9838",
+    "24.3": "0.9834",
+    "24.4": "0.9830",
+    "24.5": "0.9826",
+    "24.6": "0.9822",
+    "24.7": "0.9819",
+    "24.8": "0.9815",
+    "24.9": "0.9811",
+    "25.0": "0.9807",
+    "25.1": "0.9804",
+    "25.2": "0.9800",
+    "25.3": "0.9796",
+    "25.4": "0.9792",
+    "25.5": "0.9788",
+    "25.6": "0.9785",
+    "25.7": "0.9781",
+    "25.8": "0.9777",
+    "25.9": "0.9773",
+    "26.0": "0.9770",
+    "26.1": "0.9766",
+    "26.2": "0.9762",
+    "26.3": "0.9758",
+    "26.4": "0.9755",
+    "26.5": "0.9751",
+    "26.6": "0.9747",
+    "26.7": "0.9743",
+    "26.8": "0.9740",
+    "26.9": "0.9736",
+    "27.0": "0.9732",
+    "27.1": "0.9729",
+    "27.2": "0.9725",
+    "27.3": "0.9721",
+    "27.4": "0.9717",
+    "27.5": "0.9714",
+    "27.6": "0.9710",
+    "27.7": "0.9706",
+    "27.8": "0.9703",
+    "27.9": "0.9699",
+    "28.0": "0.9695",
+    "28.1": "0.9692",
+    "28.2": "0.9688",
+    "28.3": "0.9684",
+    "28.4": "0.9680",
+    "28.5": "0.9677",
+    "28.6": "0.9673",
+    "28.7": "0.9669",
+    "28.8": "0.9666",
+    "28.9": "0.9662",
+    "29.0": "0.9658",
+    "29.1": "0.9655",
+    "29.2": "0.9651",
+    "29.3": "0.9647",
+    "29.4": "0.9644",
+    "29.5": "0.9640",
+    "29.6": "0.9637",
+    "29.7": "0.9633",
+    "29.8": "0.9629",
+    "29.9": "0.9626",
+    "30.0": "0.9622",
+    "30.1": "0.9618",
+    "30.2": "0.9615",
+    "30.3": "0.9611",
+    "30.4": "0.9607",
+    "30.5": "0.9604",
+    "30.6": "0.9600",
+    "30.7": "0.9597",
+    "30.8": "0.9593",
+    "30.9": "0.9589",
+    "31.0": "0.9586",
+    "31.1": "0.9582",
+    "31.2": "0.9578",
+    "31.3": "0.9575",
+    "31.4": "0.9571",
+    "31.5": "0.9568",
+    "31.6": "0.9564",
+    "31.7": "0.9560",
+    "31.8": "0.9557",
+    "31.9": "0.9553",
+    "32.0": "0.9550",
+    "32.1": "0.9546",
+    "32.2": "0.9543",
+    "32.3": "0.9539",
+    "32.4": "0.9535",
+    "32.5": "0.9532",
+    "32.6": "0.9528",
+    "32.7": "0.9525",
+    "32.8": "0.9521",
+    "32.9": "0.9518",
+    "33.0": "0.9514",
+    "33.1": "0.9510",
+    "33.2": "0.9507",
+    "33.3": "0.9503",
+    "33.4": "0.9500",
+    "33.5": "0.9496",
+    "33.6": "0.9493",
+    "33.7": "0.9489",
+    "33.8": "0.9486",
+    "33.9": "0.9482",
+    "34.0": "0.9479",
+    "34.1": "0.9475",
+    "34.2": "0.9472",
+    "34.3": "0.9468",
+    "34.4": "0.9464",
+    "34.5": "0.9461",
+    "34.6": "0.9457",
+    "34.7": "0.9454",
+    "34.8": "0.9450",
+    "34.9": "0.9447"
+            },
+            "AL": {
+                "21.0": "0.9960",
+    "21.1": "0.9956",
+    "21.2": "0.9952",
+    "21.3": "0.9948",
+    "21.4": "0.9944",
+    "21.5": "0.9940",
+    "21.6": "0.9936",
+    "21.7": "0.9932",
+    "21.8": "0.9928",
+    "21.9": "0.9924",
+    "22.0": "0.9920",
+    "22.1": "0.9916",
+    "22.2": "0.9912",
+    "22.3": "0.9908",
+    "22.4": "0.9904",
+    "22.5": "0.9900",
+    "22.6": "0.9896",
+    "22.7": "0.9892",
+    "22.8": "0.9888",
+    "22.9": "0.9884",
+    "23.0": "0.9880",
+    "23.1": "0.9877",
+    "23.2": "0.9873",
+    "23.3": "0.9869",
+    "23.4": "0.9865",
+    "23.5": "0.9861",
+    "23.6": "0.9857",
+    "23.7": "0.9853",
+    "23.8": "0.9849",
+    "23.9": "0.9845",
+    "24.0": "0.9841",
+    "24.1": "0.9837",
+    "24.2": "0.9833",
+    "24.3": "0.9830",
+    "24.4": "0.9826",
+    "24.5": "0.9822",
+    "24.6": "0.9818",
+    "24.7": "0.9814",
+    "24.8": "0.9810",
+    "24.9": "0.9806",
+    "25.0": "0.9802",
+    "25.1": "0.9798",
+    "25.2": "0.9795",
+    "25.3": "0.9791",
+    "25.4": "0.9787",
+    "25.5": "0.9783",
+    "25.6": "0.9779",
+    "25.7": "0.9775",
+    "25.8": "0.9771",
+    "25.9": "0.9768",
+    "26.0": "0.9764",
+    "26.1": "0.9760",
+    "26.2": "0.9756",
+    "26.3": "0.9752",
+    "26.4": "0.9748",
+    "26.5": "0.9745",
+    "26.6": "0.9741",
+    "26.7": "0.9797",
+    "26.8": "0.9733",
+    "26.9": "0.9729",
+    "27.0": "0.9725",
+    "27.1": "0.9722",
+    "27.2": "0.9718",
+    "27.3": "0.9714",
+    "27.4": "0.9710",
+    "27.5": "0.9706",
+    "27.6": "0.9703",
+    "27.7": "0.9699",
+    "27.8": "0.9695",
+    "27.9": "0.9691",
+    "28.0": "0.9688",
+    "28.1": "0.9684",
+    "28.2": "0.9680",
+    "28.3": "0.9676",
+    "28.4": "0.9672",
+    "28.5": "0.9669",
+    "28.6": "0.9665",
+    "28.7": "0.9661",
+    "28.8": "0.9657",
+    "28.9": "0.9654",
+    "29.0": "0.9650",
+    "29.1": "0.9646",
+    "29.2": "0.9642",
+    "29.3": "0.9639",
+    "29.4": "0.9635",
+    "29.5": "0.9631",
+    "29.6": "0.9627",
+    "29.7": "0.9624",
+    "29.8": "0.9620",
+    "29.9": "0.9616",
+    "30.0": "0.9612",
+    "30.1": "0.9609",
+    "30.2": "0.9605",
+    "30.3": "0.9601",
+    "30.4": "0.9598",
+    "30.5": "0.9594",
+    "30.6": "0.9590",
+    "30.7": "0.9586",
+    "30.8": "0.9583",
+    "30.9": "0.9579",
+    "31.0": "0.9575",
+    "31.1": "0.9572",
+    "31.2": "0.9568",
+    "31.3": "0.9564",
+    "31.4": "0.9561",
+    "31.5": "0.9557",
+    "31.6": "0.9553",
+    "31.7": "0.9549",
+    "31.8": "0.9546",
+    "31.9": "0.9542",
+    "32.0": "0.9538",
+    "32.1": "0.9535",
+    "32.2": "0.9531",
+    "32.3": "0.9527",
+    "32.4": "0.9524",
+    "32.5": "0.9520",
+    "32.6": "0.9517",
+    "32.7": "0.9513",
+    "32.8": "0.9509",
+    "32.9": "0.9506",
+    "33.0": "0.9502",
+    "33.1": "0.9498",
+    "33.2": "0.9495",
+    "33.3": "0.9491",
+    "33.4": "0.9487",
+    "33.5": "0.9484",
+    "33.6": "0.9480",
+    "33.7": "0.9476",
+    "33.8": "0.9473",
+    "33.9": "0.9469",
+    "34.0": "0.9466",
+    "34.1": "0.9462",
+    "34.2": "0.9458",
+    "34.3": "0.9455",
+    "34.4": "0.9451",
+    "34.5": "0.9448",
+    "34.6": "0.9444",
+    "34.7": "0.9440",
+    "34.8": "0.9437",
+    "34.9": "0.9433"
+            },
+            "TCU": {
+                "21.0": "0.9961",
+    "21.1": "0.9957",
+    "21.2": "0.9953",
+    "21.3": "0.9949",
+    "21.4": "0.9945",
+    "21.5": "0.9941",
+    "21.6": "0.9938",
+    "21.7": "0.9934",
+    "21.8": "0.9930",
+    "21.9": "0.9926",
+    "22.0": "0.9922",
+    "22.1": "0.9918",
+    "22.2": "0.9914",
+    "22.3": "0.9910",
+    "22.4": "0.9907",
+    "22.5": "0.9903",
+    "22.6": "0.9899",
+    "22.7": "0.9895",
+    "22.8": "0.9891",
+    "22.9": "0.9887",
+    "23.0": "0.9883",
+    "23.1": "0.9880",
+    "23.2": "0.9876",
+    "23.3": "0.9872",
+    "23.4": "0.9868",
+    "23.5": "0.9864",
+    "23.6": "0.9861",
+    "23.7": "0.9857",
+    "23.8": "0.9853",
+    "23.9": "0.9849",
+    "24.0": "0.9845",
+    "24.1": "0.9841",
+    "24.2": "0.9838",
+    "24.3": "0.9834",
+    "24.4": "0.9830",
+    "24.5": "0.9826",
+    "24.6": "0.9822",
+    "24.7": "0.9819",
+    "24.8": "0.9815",
+    "24.9": "0.9811",
+    "25.0": "0.9807",
+    "25.1": "0.9804",
+    "25.2": "0.9800",
+    "25.3": "0.9796",
+    "25.4": "0.9792",
+    "25.5": "0.9788",
+    "25.6": "0.9785",
+    "25.7": "0.9781",
+    "25.8": "0.9777",
+    "25.9": "0.9773",
+    "26.0": "0.9770",
+    "26.1": "0.9766",
+    "26.2": "0.9762",
+    "26.3": "0.9758",
+    "26.4": "0.9755",
+    "26.5": "0.9751",
+    "26.6": "0.9747",
+    "26.7": "0.9743",
+    "26.8": "0.9740",
+    "26.9": "0.9736",
+    "27.0": "0.9732",
+    "27.1": "0.9729",
+    "27.2": "0.9725",
+    "27.3": "0.9721",
+    "27.4": "0.9717",
+    "27.5": "0.9714",
+    "27.6": "0.9710",
+    "27.7": "0.9706",
+    "27.8": "0.9703",
+    "27.9": "0.9699",
+    "28.0": "0.9695",
+    "28.1": "0.9692",
+    "28.2": "0.9688",
+    "28.3": "0.9684",
+    "28.4": "0.9680",
+    "28.5": "0.9677",
+    "28.6": "0.9673",
+    "28.7": "0.9669",
+    "28.8": "0.9666",
+    "28.9": "0.9662",
+    "29.0": "0.9658",
+    "29.1": "0.9655",
+    "29.2": "0.9651",
+    "29.3": "0.9647",
+    "29.4": "0.9644",
+    "29.5": "0.9640",
+    "29.6": "0.9637",
+    "29.7": "0.9633",
+    "29.8": "0.9629",
+    "29.9": "0.9626",
+    "30.0": "0.9622",
+    "30.1": "0.9618",
+    "30.2": "0.9615",
+    "30.3": "0.9611",
+    "30.4": "0.9607",
+    "30.5": "0.9604",
+    "30.6": "0.9600",
+    "30.7": "0.9597",
+    "30.8": "0.9593",
+    "30.9": "0.9589",
+    "31.0": "0.9586",
+    "31.1": "0.9582",
+    "31.2": "0.9578",
+    "31.3": "0.9575",
+    "31.4": "0.9571",
+    "31.5": "0.9568",
+    "31.6": "0.9564",
+    "31.7": "0.9560",
+    "31.8": "0.9557",
+    "31.9": "0.9553",
+    "32.0": "0.9550",
+    "32.1": "0.9546",
+    "32.2": "0.9543",
+    "32.3": "0.9539",
+    "32.4": "0.9535",
+    "32.5": "0.9532",
+    "32.6": "0.9528",
+    "32.7": "0.9525",
+    "32.8": "0.9521",
+    "32.9": "0.9518",
+    "33.0": "0.9514",
+    "33.1": "0.9510",
+    "33.2": "0.9507",
+    "33.3": "0.9503",
+    "33.4": "0.9500",
+    "33.5": "0.9496",
+    "33.6": "0.9493",
+    "33.7": "0.9489",
+    "33.8": "0.9486",
+    "33.9": "0.9482",
+    "34.0": "0.9479",
+    "34.1": "0.9475",
+    "34.2": "0.9472",
+    "34.3": "0.9468",
+    "34.4": "0.9464",
+    "34.5": "0.9461",
+    "34.6": "0.9457",
+    "34.7": "0.9454",
+    "34.8": "0.9450",
+    "34.9": "0.9447"
+            },
+            "IEC": {
+                "0": "1.087",
+    "1": "1.082",
+    "2": "1.078",
+    "3": "1.073",
+    "4": "1.068",
+    "5": "1.064",
+    "6": "1.059",
+    "7": "1.055",
+    "8": "1.050",
+    "9": "1.046",
+    "10": "1.042",
+    "11": "1.037",
+    "12": "1.033",
+    "13": "1.029",
+    "14": "1.025",
+    "15": "1.020",
+    "16": "1.016",
+    "17": "1.012",
+    "18": "1.008",
+    "19": "1.004",
+    "20": "1.000",
+    "21": "0.996",
+    "22": "0.992",
+    "23": "0.988",
+    "24": "0.984",
+    "25": "0.980",
+    "26": "0.977",
+    "27": "0.973",
+    "28": "0.969",
+    "29": "0.965",
+    "30": "0.962",
+    "31": "0.958",
+    "32": "0.954",
+    "33": "0.951",
+    "34": "0.947",
+    "35": "0.943",
+    "36": "0.940",
+    "37": "0.936",
+    "38": "0.933",
+    "39": "0.929",
+    "40": "0.926"
+            }
+        };
+
+        // Suhu list untuk tiap material
+        const tempOptions = {
+            "CU": [
+{ value: "21.0", label: "21.0" },
+{ value: "21.1", label: "21.1" },
+{ value: "21.2", label: "21.2" },
+{ value: "21.3", label: "21.3" },
+{ value: "21.4", label: "21.4" },
+{ value: "21.5", label: "21.5" },
+{ value: "21.6", label: "21.6" },
+{ value: "21.7", label: "21.7" },
+{ value: "21.8", label: "21.8" },
+{ value: "21.9", label: "21.9" },
+{ value: "22.0", label: "22.0" },
+{ value: "22.1", label: "22.1" },
+{ value: "22.2", label: "22.2" },
+{ value: "22.3", label: "22.3" },
+{ value: "22.4", label: "22.4" },
+{ value: "22.5", label: "22.5" },
+{ value: "22.6", label: "22.6" },
+{ value: "22.7", label: "22.7" },
+{ value: "22.8", label: "22.8" },
+{ value: "22.9", label: "22.9" },
+{ value: "23.0", label: "23.0" },
+{ value: "23.1", label: "23.1" },
+{ value: "23.2", label: "23.2" },
+{ value: "23.3", label: "23.3" },
+{ value: "23.4", label: "23.4" },
+{ value: "23.5", label: "23.5" },
+{ value: "23.6", label: "23.6" },
+{ value: "23.7", label: "23.7" },
+{ value: "23.8", label: "23.8" },
+{ value: "23.9", label: "23.9" },
+{ value: "24.0", label: "24.0" },
+{ value: "24.1", label: "24.1" },
+{ value: "24.2", label: "24.2" },
+{ value: "24.3", label: "24.3" },
+{ value: "24.4", label: "24.4" },
+{ value: "24.5", label: "24.5" },
+{ value: "24.6", label: "24.6" },
+{ value: "24.7", label: "24.7" },
+{ value: "24.8", label: "24.8" },
+{ value: "24.9", label: "24.9" },
+{ value: "25.0", label: "25.0" },
+{ value: "25.1", label: "25.1" },
+{ value: "25.2", label: "25.2" },
+{ value: "25.3", label: "25.3" },
+{ value: "25.4", label: "25.4" },
+{ value: "25.5", label: "25.5" },
+{ value: "25.6", label: "25.6" },
+{ value: "25.7", label: "25.7" },
+{ value: "25.8", label: "25.8" },
+{ value: "25.9", label: "25.9" },
+{ value: "26.0", label: "26.0" },
+{ value: "26.1", label: "26.1" },
+{ value: "26.2", label: "26.2" },
+{ value: "26.3", label: "26.3" },
+{ value: "26.4", label: "26.4" },
+{ value: "26.5", label: "26.5" },
+{ value: "26.6", label: "26.6" },
+{ value: "26.7", label: "26.7" },
+{ value: "26.8", label: "26.8" },
+{ value: "26.9", label: "26.9" },
+{ value: "27.0", label: "27.0" },
+{ value: "27.1", label: "27.1" },
+{ value: "27.2", label: "27.2" },
+{ value: "27.3", label: "27.3" },
+{ value: "27.4", label: "27.4" },
+{ value: "27.5", label: "27.5" },
+{ value: "27.6", label: "27.6" },
+{ value: "27.7", label: "27.7" },
+{ value: "27.8", label: "27.8" },
+{ value: "27.9", label: "27.9" },
+{ value: "28.0", label: "28.0" },
+{ value: "28.1", label: "28.1" },
+{ value: "28.2", label: "28.2" },
+{ value: "28.3", label: "28.3" },
+{ value: "28.4", label: "28.4" },
+{ value: "28.5", label: "28.5" },
+{ value: "28.6", label: "28.6" },
+{ value: "28.7", label: "28.7" },
+{ value: "28.8", label: "28.8" },
+{ value: "28.9", label: "28.9" },
+{ value: "29.0", label: "29.0" },
+{ value: "29.1", label: "29.1" },
+{ value: "29.2", label: "29.2" },
+{ value: "29.3", label: "29.3" },
+{ value: "29.4", label: "29.4" },
+{ value: "29.5", label: "29.5" },
+{ value: "29.6", label: "29.6" },
+{ value: "29.7", label: "29.7" },
+{ value: "29.8", label: "29.8" },
+{ value: "29.9", label: "29.9" },
+{ value: "30.0", label: "30.0" },
+{ value: "30.1", label: "30.1" },
+{ value: "30.2", label: "30.2" },
+{ value: "30.3", label: "30.3" },
+{ value: "30.4", label: "30.4" },
+{ value: "30.5", label: "30.5" },
+{ value: "30.6", label: "30.6" },
+{ value: "30.7", label: "30.7" },
+{ value: "30.8", label: "30.8" },
+{ value: "30.9", label: "30.9" },
+{ value: "31.0", label: "31.0" },
+{ value: "31.1", label: "31.1" },
+{ value: "31.2", label: "31.2" },
+{ value: "31.3", label: "31.3" },
+{ value: "31.4", label: "31.4" },
+{ value: "31.5", label: "31.5" },
+{ value: "31.6", label: "31.6" },
+{ value: "31.7", label: "31.7" },
+{ value: "31.8", label: "31.8" },
+{ value: "31.9", label: "31.9" },
+{ value: "32.0", label: "32.0" },
+{ value: "32.1", label: "32.1" },
+{ value: "32.2", label: "32.2" },
+{ value: "32.3", label: "32.3" },
+{ value: "32.4", label: "32.4" },
+{ value: "32.5", label: "32.5" },
+{ value: "32.6", label: "32.6" },
+{ value: "32.7", label: "32.7" },
+{ value: "32.8", label: "32.8" },
+{ value: "32.9", label: "32.9" },
+{ value: "33.0", label: "33.0" },
+{ value: "33.1", label: "33.1" },
+{ value: "33.2", label: "33.2" },
+{ value: "33.3", label: "33.3" },
+{ value: "33.4", label: "33.4" },
+{ value: "33.5", label: "33.5" },
+{ value: "33.6", label: "33.6" },
+{ value: "33.7", label: "33.7" },
+{ value: "33.8", label: "33.8" },
+{ value: "33.9", label: "33.9" },
+{ value: "34.0", label: "34.0" },
+{ value: "34.1", label: "34.1" },
+{ value: "34.2", label: "34.2" },
+{ value: "34.3", label: "34.3" },
+{ value: "34.4", label: "34.4" },
+{ value: "34.5", label: "34.5" },
+{ value: "34.6", label: "34.6" },
+{ value: "34.7", label: "34.7" },
+{ value: "34.8", label: "34.8" },
+{ value: "34.9", label: "34.9" }
+            ],
+            "AL": [
+{ value: "21.0", label: "21.0" },
+{ value: "21.1", label: "21.1" },
+{ value: "21.2", label: "21.2" },
+{ value: "21.3", label: "21.3" },
+{ value: "21.4", label: "21.4" },
+{ value: "21.5", label: "21.5" },
+{ value: "21.6", label: "21.6" },
+{ value: "21.7", label: "21.7" },
+{ value: "21.8", label: "21.8" },
+{ value: "21.9", label: "21.9" },
+{ value: "22.0", label: "22.0" },
+{ value: "22.1", label: "22.1" },
+{ value: "22.2", label: "22.2" },
+{ value: "22.3", label: "22.3" },
+{ value: "22.4", label: "22.4" },
+{ value: "22.5", label: "22.5" },
+{ value: "22.6", label: "22.6" },
+{ value: "22.7", label: "22.7" },
+{ value: "22.8", label: "22.8" },
+{ value: "22.9", label: "22.9" },
+{ value: "23.0", label: "23.0" },
+{ value: "23.1", label: "23.1" },
+{ value: "23.2", label: "23.2" },
+{ value: "23.3", label: "23.3" },
+{ value: "23.4", label: "23.4" },
+{ value: "23.5", label: "23.5" },
+{ value: "23.6", label: "23.6" },
+{ value: "23.7", label: "23.7" },
+{ value: "23.8", label: "23.8" },
+{ value: "23.9", label: "23.9" },
+{ value: "24.0", label: "24.0" },
+{ value: "24.1", label: "24.1" },
+{ value: "24.2", label: "24.2" },
+{ value: "24.3", label: "24.3" },
+{ value: "24.4", label: "24.4" },
+{ value: "24.5", label: "24.5" },
+{ value: "24.6", label: "24.6" },
+{ value: "24.7", label: "24.7" },
+{ value: "24.8", label: "24.8" },
+{ value: "24.9", label: "24.9" },
+{ value: "25.0", label: "25.0" },
+{ value: "25.1", label: "25.1" },
+{ value: "25.2", label: "25.2" },
+{ value: "25.3", label: "25.3" },
+{ value: "25.4", label: "25.4" },
+{ value: "25.5", label: "25.5" },
+{ value: "25.6", label: "25.6" },
+{ value: "25.7", label: "25.7" },
+{ value: "25.8", label: "25.8" },
+{ value: "25.9", label: "25.9" },
+{ value: "26.0", label: "26.0" },
+{ value: "26.1", label: "26.1" },
+{ value: "26.2", label: "26.2" },
+{ value: "26.3", label: "26.3" },
+{ value: "26.4", label: "26.4" },
+{ value: "26.5", label: "26.5" },
+{ value: "26.6", label: "26.6" },
+{ value: "26.7", label: "26.7" },
+{ value: "26.8", label: "26.8" },
+{ value: "26.9", label: "26.9" },
+{ value: "27.0", label: "27.0" },
+{ value: "27.1", label: "27.1" },
+{ value: "27.2", label: "27.2" },
+{ value: "27.3", label: "27.3" },
+{ value: "27.4", label: "27.4" },
+{ value: "27.5", label: "27.5" },
+{ value: "27.6", label: "27.6" },
+{ value: "27.7", label: "27.7" },
+{ value: "27.8", label: "27.8" },
+{ value: "27.9", label: "27.9" },
+{ value: "28.0", label: "28.0" },
+{ value: "28.1", label: "28.1" },
+{ value: "28.2", label: "28.2" },
+{ value: "28.3", label: "28.3" },
+{ value: "28.4", label: "28.4" },
+{ value: "28.5", label: "28.5" },
+{ value: "28.6", label: "28.6" },
+{ value: "28.7", label: "28.7" },
+{ value: "28.8", label: "28.8" },
+{ value: "28.9", label: "28.9" },
+{ value: "29.0", label: "29.0" },
+{ value: "29.1", label: "29.1" },
+{ value: "29.2", label: "29.2" },
+{ value: "29.3", label: "29.3" },
+{ value: "29.4", label: "29.4" },
+{ value: "29.5", label: "29.5" },
+{ value: "29.6", label: "29.6" },
+{ value: "29.7", label: "29.7" },
+{ value: "29.8", label: "29.8" },
+{ value: "29.9", label: "29.9" },
+{ value: "30.0", label: "30.0" },
+{ value: "30.1", label: "30.1" },
+{ value: "30.2", label: "30.2" },
+{ value: "30.3", label: "30.3" },
+{ value: "30.4", label: "30.4" },
+{ value: "30.5", label: "30.5" },
+{ value: "30.6", label: "30.6" },
+{ value: "30.7", label: "30.7" },
+{ value: "30.8", label: "30.8" },
+{ value: "30.9", label: "30.9" },
+{ value: "31.0", label: "31.0" },
+{ value: "31.1", label: "31.1" },
+{ value: "31.2", label: "31.2" },
+{ value: "31.3", label: "31.3" },
+{ value: "31.4", label: "31.4" },
+{ value: "31.5", label: "31.5" },
+{ value: "31.6", label: "31.6" },
+{ value: "31.7", label: "31.7" },
+{ value: "31.8", label: "31.8" },
+{ value: "31.9", label: "31.9" },
+{ value: "32.0", label: "32.0" },
+{ value: "32.1", label: "32.1" },
+{ value: "32.2", label: "32.2" },
+{ value: "32.3", label: "32.3" },
+{ value: "32.4", label: "32.4" },
+{ value: "32.5", label: "32.5" },
+{ value: "32.6", label: "32.6" },
+{ value: "32.7", label: "32.7" },
+{ value: "32.8", label: "32.8" },
+{ value: "32.9", label: "32.9" },
+{ value: "33.0", label: "33.0" },
+{ value: "33.1", label: "33.1" },
+{ value: "33.2", label: "33.2" },
+{ value: "33.3", label: "33.3" },
+{ value: "33.4", label: "33.4" },
+{ value: "33.5", label: "33.5" },
+{ value: "33.6", label: "33.6" },
+{ value: "33.7", label: "33.7" },
+{ value: "33.8", label: "33.8" },
+{ value: "33.9", label: "33.9" },
+{ value: "34.0", label: "34.0" },
+{ value: "34.1", label: "34.1" },
+{ value: "34.2", label: "34.2" },
+{ value: "34.3", label: "34.3" },
+{ value: "34.4", label: "34.4" },
+{ value: "34.5", label: "34.5" },
+{ value: "34.6", label: "34.6" },
+{ value: "34.7", label: "34.7" },
+{ value: "34.8", label: "34.8" },
+{ value: "34.9", label: "34.9" }
+            ],
+            "TCU": [
+{ value: "21.0", label: "21.0" },
+{ value: "21.1", label: "21.1" },
+{ value: "21.2", label: "21.2" },
+{ value: "21.3", label: "21.3" },
+{ value: "21.4", label: "21.4" },
+{ value: "21.5", label: "21.5" },
+{ value: "21.6", label: "21.6" },
+{ value: "21.7", label: "21.7" },
+{ value: "21.8", label: "21.8" },
+{ value: "21.9", label: "21.9" },
+{ value: "22.0", label: "22.0" },
+{ value: "22.1", label: "22.1" },
+{ value: "22.2", label: "22.2" },
+{ value: "22.3", label: "22.3" },
+{ value: "22.4", label: "22.4" },
+{ value: "22.5", label: "22.5" },
+{ value: "22.6", label: "22.6" },
+{ value: "22.7", label: "22.7" },
+{ value: "22.8", label: "22.8" },
+{ value: "22.9", label: "22.9" },
+{ value: "23.0", label: "23.0" },
+{ value: "23.1", label: "23.1" },
+{ value: "23.2", label: "23.2" },
+{ value: "23.3", label: "23.3" },
+{ value: "23.4", label: "23.4" },
+{ value: "23.5", label: "23.5" },
+{ value: "23.6", label: "23.6" },
+{ value: "23.7", label: "23.7" },
+{ value: "23.8", label: "23.8" },
+{ value: "23.9", label: "23.9" },
+{ value: "24.0", label: "24.0" },
+{ value: "24.1", label: "24.1" },
+{ value: "24.2", label: "24.2" },
+{ value: "24.3", label: "24.3" },
+{ value: "24.4", label: "24.4" },
+{ value: "24.5", label: "24.5" },
+{ value: "24.6", label: "24.6" },
+{ value: "24.7", label: "24.7" },
+{ value: "24.8", label: "24.8" },
+{ value: "24.9", label: "24.9" },
+{ value: "25.0", label: "25.0" },
+{ value: "25.1", label: "25.1" },
+{ value: "25.2", label: "25.2" },
+{ value: "25.3", label: "25.3" },
+{ value: "25.4", label: "25.4" },
+{ value: "25.5", label: "25.5" },
+{ value: "25.6", label: "25.6" },
+{ value: "25.7", label: "25.7" },
+{ value: "25.8", label: "25.8" },
+{ value: "25.9", label: "25.9" },
+{ value: "26.0", label: "26.0" },
+{ value: "26.1", label: "26.1" },
+{ value: "26.2", label: "26.2" },
+{ value: "26.3", label: "26.3" },
+{ value: "26.4", label: "26.4" },
+{ value: "26.5", label: "26.5" },
+{ value: "26.6", label: "26.6" },
+{ value: "26.7", label: "26.7" },
+{ value: "26.8", label: "26.8" },
+{ value: "26.9", label: "26.9" },
+{ value: "27.0", label: "27.0" },
+{ value: "27.1", label: "27.1" },
+{ value: "27.2", label: "27.2" },
+{ value: "27.3", label: "27.3" },
+{ value: "27.4", label: "27.4" },
+{ value: "27.5", label: "27.5" },
+{ value: "27.6", label: "27.6" },
+{ value: "27.7", label: "27.7" },
+{ value: "27.8", label: "27.8" },
+{ value: "27.9", label: "27.9" },
+{ value: "28.0", label: "28.0" },
+{ value: "28.1", label: "28.1" },
+{ value: "28.2", label: "28.2" },
+{ value: "28.3", label: "28.3" },
+{ value: "28.4", label: "28.4" },
+{ value: "28.5", label: "28.5" },
+{ value: "28.6", label: "28.6" },
+{ value: "28.7", label: "28.7" },
+{ value: "28.8", label: "28.8" },
+{ value: "28.9", label: "28.9" },
+{ value: "29.0", label: "29.0" },
+{ value: "29.1", label: "29.1" },
+{ value: "29.2", label: "29.2" },
+{ value: "29.3", label: "29.3" },
+{ value: "29.4", label: "29.4" },
+{ value: "29.5", label: "29.5" },
+{ value: "29.6", label: "29.6" },
+{ value: "29.7", label: "29.7" },
+{ value: "29.8", label: "29.8" },
+{ value: "29.9", label: "29.9" },
+{ value: "30.0", label: "30.0" },
+{ value: "30.1", label: "30.1" },
+{ value: "30.2", label: "30.2" },
+{ value: "30.3", label: "30.3" },
+{ value: "30.4", label: "30.4" },
+{ value: "30.5", label: "30.5" },
+{ value: "30.6", label: "30.6" },
+{ value: "30.7", label: "30.7" },
+{ value: "30.8", label: "30.8" },
+{ value: "30.9", label: "30.9" },
+{ value: "31.0", label: "31.0" },
+{ value: "31.1", label: "31.1" },
+{ value: "31.2", label: "31.2" },
+{ value: "31.3", label: "31.3" },
+{ value: "31.4", label: "31.4" },
+{ value: "31.5", label: "31.5" },
+{ value: "31.6", label: "31.6" },
+{ value: "31.7", label: "31.7" },
+{ value: "31.8", label: "31.8" },
+{ value: "31.9", label: "31.9" },
+{ value: "32.0", label: "32.0" },
+{ value: "32.1", label: "32.1" },
+{ value: "32.2", label: "32.2" },
+{ value: "32.3", label: "32.3" },
+{ value: "32.4", label: "32.4" },
+{ value: "32.5", label: "32.5" },
+{ value: "32.6", label: "32.6" },
+{ value: "32.7", label: "32.7" },
+{ value: "32.8", label: "32.8" },
+{ value: "32.9", label: "32.9" },
+{ value: "33.0", label: "33.0" },
+{ value: "33.1", label: "33.1" },
+{ value: "33.2", label: "33.2" },
+{ value: "33.3", label: "33.3" },
+{ value: "33.4", label: "33.4" },
+{ value: "33.5", label: "33.5" },
+{ value: "33.6", label: "33.6" },
+{ value: "33.7", label: "33.7" },
+{ value: "33.8", label: "33.8" },
+{ value: "33.9", label: "33.9" },
+{ value: "34.0", label: "34.0" },
+{ value: "34.1", label: "34.1" },
+{ value: "34.2", label: "34.2" },
+{ value: "34.3", label: "34.3" },
+{ value: "34.4", label: "34.4" },
+{ value: "34.5", label: "34.5" },
+{ value: "34.6", label: "34.6" },
+{ value: "34.7", label: "34.7" },
+{ value: "34.8", label: "34.8" },
+{ value: "34.9", label: "34.9" }
+            ],
+            "IEC": [
+{ value: "0", label: "0" },
+{ value: "1", label: "1" },
+{ value: "2", label: "2" },
+{ value: "3", label: "3" },
+{ value: "4", label: "4" },
+{ value: "5", label: "5" },
+{ value: "6", label: "6" },
+{ value: "7", label: "7" },
+{ value: "8", label: "8" },
+{ value: "9", label: "9" },
+{ value: "10", label: "10" },
+{ value: "11", label: "11" },
+{ value: "12", label: "12" },
+{ value: "13", label: "13" },
+{ value: "14", label: "14" },
+{ value: "15", label: "15" },
+{ value: "16", label: "16" },
+{ value: "17", label: "17" },
+{ value: "18", label: "18" },
+{ value: "19", label: "19" },
+{ value: "20", label: "20" },
+{ value: "21", label: "21" },
+{ value: "22", label: "22" },
+{ value: "23", label: "23" },
+{ value: "24", label: "24" },
+{ value: "25", label: "25" },
+{ value: "26", label: "26" },
+{ value: "27", label: "27" },
+{ value: "28", label: "28" },
+{ value: "29", label: "29" },
+{ value: "30", label: "30" },
+{ value: "31", label: "31" },
+{ value: "32", label: "32" },
+{ value: "33", label: "33" },
+{ value: "34", label: "34" },
+{ value: "35", label: "35" },
+{ value: "36", label: "36" },
+{ value: "37", label: "37" },
+{ value: "38", label: "38" },
+{ value: "39", label: "39" },
+{ value: "40", label: "40" }
+            ]
+        };
+
+        let selectedMaterial = 'CU';
+        let selectedTemp = "21.0";
+        const materialButtons = document.querySelectorAll('.btn-material');
+        const faktorPanel = document.getElementById('faktorKoreksi');
+        const materialInfo = document.getElementById('materialInfo');
+        const tempSelect = document.getElementById('temperature');
+
+        // Durasi fade harus sinkron dengan CSS transition di atas
+        const fadeDuration = 900; // ms
+
+        function setFade(el, fade = true) {
+            if(fade) el.classList.add('fade');
+            else el.classList.remove('fade');
+        }
+
+        function animateResult(newFaktor, newInfo) {
+            setFade(faktorPanel, true);
+            setFade(materialInfo, true);
+            setTimeout(() => {
+                faktorPanel.textContent = newFaktor;
+                materialInfo.textContent = newInfo;
+                setFade(faktorPanel, false);
+                setFade(materialInfo, false);
+            }, fadeDuration / 2); // untuk efek lebih halus
+        }
+
+        function updateTempOptions(material, keepCurrent) {
+            const opts = tempOptions[material];
+            const current = keepCurrent ? tempSelect.value : null;
+            tempSelect.innerHTML = "";
+            opts.forEach((o, i) => {
+                const option = document.createElement('option');
+                option.value = o.value;
+                option.textContent = o.label;
+                if((keepCurrent && o.value === current) || (!keepCurrent && i === 0)) {
+                    option.selected = true;
+                }
+                tempSelect.appendChild(option);
+            });
+            selectedTemp = tempSelect.value;
+        }
+
+        function updateResult() {
+            if(selectedMaterial && selectedTemp) {
+                const faktor = koreksiMap[selectedMaterial][selectedTemp] || "—";
+                let matName = '';
+                if(selectedMaterial === "CU") matName = "Copper (Tembaga)";
+                else if(selectedMaterial === "AL") matName = "Aluminium";
+                else if(selectedMaterial === "TCU") matName = "Tinned Copper (Tembaga Berlapis Timah)";
+                else if(selectedMaterial === "IEC") matName = "IEC Standard";
+                const info = `Material: ${matName}, Suhu: ${selectedTemp}°C`;
+                animateResult(faktor, info);
+            } else {
+                animateResult("—", "");
+            }
+        }
+
+        materialButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                materialButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                if(this.id === 'cuBtn') selectedMaterial = 'CU';
+                if(this.id === 'alBtn') selectedMaterial = 'AL';
+                if(this.id === 'tcuBtn') selectedMaterial = 'TCU';
+                if(this.id === 'iecBtn') selectedMaterial = 'IEC';
+                // Update temp options based on material
+                updateTempOptions(selectedMaterial, false);
+                updateResult();
+            });
+        });
+
+        tempSelect.addEventListener('change', function() {
+            selectedTemp = this.value;
+            updateResult();
+        });
+
+        // DARK MODE TOGGLE
+        const darkBtn = document.getElementById('darkModeToggle');
+        function setDarkMode(state) {
+            if(state) {
+                document.body.classList.add('dark-mode');
+                darkBtn.innerHTML = "🌞";
+                localStorage.setItem('iec_darkmode', "1");
+            } else {
+                document.body.classList.remove('dark-mode');
+                darkBtn.innerHTML = "🌙";
+                localStorage.setItem('iec_darkmode', "0");
+            }
+        }
+        darkBtn.addEventListener('click', function() {
+            setDarkMode(!document.body.classList.contains('dark-mode'));
+        });
+
+        // Initial load
+        window.addEventListener('DOMContentLoaded', function() {
+            let useDark = localStorage.getItem('iec_darkmode');
+            if(useDark === "1" || (useDark === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                setDarkMode(true);
+            } else {
+                setDarkMode(false);
+            }
+            document.getElementById('cuBtn').classList.add('active');
+            selectedMaterial = 'CU';
+            updateTempOptions(selectedMaterial, false);
+            updateResult();
+        });
+    </script>
+</body>
+</html>

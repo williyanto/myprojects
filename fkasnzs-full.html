@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Converter Faktor Koreksi Suhu AS/NZS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f7fafc;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            font-weight: 400;
+        }
+        .container-center {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .main-card {
+            width: 100%;
+            max-width: 370px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px #cfe2ff36;
+            padding: 2rem 1.3rem 1.3rem 1.3rem;
+            background: #fff;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 510px;
+        }
+        .main-title {
+            font-size: 1.18rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            color: #0560fa;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        .main-title span {
+            font-weight: 400;
+        }
+        .material-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.2rem;
+        }
+        .btn-material {
+            flex: 1 1 0;
+            border: 1.2px solid #e0e7ef;
+            font-weight: 400;
+            border-radius: 10px;
+            font-size: 0.98rem;
+            padding: 0.7rem 0.2rem;
+            transition: background .17s, color .17s, border .14s;
+        }
+        #cuBtn {
+            background: #e3f4fc;
+            color: #0ea5e9;
+            border-color: #bae6fd;
+        }
+        #cuBtn.active, #cuBtn:focus {
+            background: #0ea5e9;
+            color: #fff;
+            border-color: #0ea5e9;
+        }
+        #cuBtn:not(.active):hover {
+            background: #bae6fd;
+            color: #0ea5e9;
+        }
+
+        #alBtn {
+            background: #f3f4f6;
+            color: #64748b;
+            border-color: #d1d5db;
+        }
+        #alBtn.active, #alBtn:focus {
+            background: #64748b;
+            color: #fff;
+            border-color: #64748b;
+        }
+        #alBtn:not(.active):hover {
+            background: #d1d5db;
+            color: #64748b;
+        }
+
+        /* DARK MODE STYLES */
+        body.dark-mode {
+            background: #121826;
+        }
+        .dark-mode .main-card {
+            background: #232e42;
+            box-shadow: 0 4px 16px #0000004d;
+        }
+        .dark-mode .main-title {
+            color: #60a5fa;
+        }
+        .dark-mode label,
+        .dark-mode .footer {
+            color: #b8c1d6 !important;
+        }
+        .dark-mode .btn-material {
+            border-color: #374151 !important;
+        }
+        .dark-mode #cuBtn {
+            background: #0a3242;
+            color: #3fd8fc;
+            border-color: #0ea5e9;
+        }
+        .dark-mode #cuBtn.active, .dark-mode #cuBtn:focus {
+            background: #0ea5e9;
+            color: #fff;
+            border-color: #0ea5e9;
+        }
+        .dark-mode #alBtn {
+            background: #1e293b;
+            color: #cbd5e1;
+            border-color: #64748b;
+        }
+        .dark-mode #alBtn.active, .dark-mode #alBtn:focus {
+            background: #64748b;
+            color: #fff;
+            border-color: #64748b;
+        }
+        .dark-mode #tcuBtn {
+            background: #624a09;
+            color: #fde68a;
+            border-color: #fde68a;
+        }
+        .dark-mode #tcuBtn.active, .dark-mode #tcuBtn:focus {
+            background: #ca8a04;
+            color: #fff;
+            border-color: #ca8a04;
+        }
+        .dark-mode .select-suhu {
+            background: #232e42;
+            color: #fff;
+            border-color: #374151;
+        }
+        .dark-mode .result-panel {
+            background: #0b1625;
+            border-color: #374151;
+            color: #60a5fa;
+        }
+        .dark-mode .info-panel {
+            color: #b8c1d6;
+        }
+        .dark-mode .footer {
+            color: #374151 !important;
+        }
+        /* END DARK MODE STYLES */
+
+        label {
+            font-size: 0.98rem;
+            margin-bottom: 0.35rem;
+            font-weight: 400;
+        }
+        .select-suhu {
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+        .result-panel {
+            background: #f4faff;
+            border-radius: 8px;
+            border: 1px solid #e3eaf5;
+            font-size: 1.28rem;
+            font-weight: 700;
+            color: #0560fa;
+            text-align: center;
+            padding: 0.81rem;
+            margin-top: 0.8rem;
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.85s cubic-bezier(.4,0,.2,1), transform 0.95s cubic-bezier(.4,0,.2,1);
+            will-change: opacity, transform;
+        }
+        .result-panel.fade {
+            opacity: 0;
+            transform: scale(1.1);
+        }
+        .info-panel {
+            font-size: 0.94rem;
+            color: #7a869a;
+            margin-top: 0.5rem;
+            text-align: center;
+            font-weight: 400;
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.85s, transform 0.95s;
+        }
+        .info-panel.fade {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .footer {
+            margin-top: auto;
+            color: #b5c2d3;
+            font-size: 0.93rem;
+            font-weight: 400;
+            text-align: center;
+            width: 100%;
+        }
+        .darkmode-btn-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 22px;
+        }
+        .btn-darkmode-toggle {
+            width: 32px;
+            height: 32px;
+            background: #f1f5f9;
+            color: #334155;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.1em;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #0001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, color 0.2s;
+            z-index: 2;
+        }
+        .btn-darkmode-toggle:hover {
+            background: #dbeafe;
+            color: #1e293b;
+        }
+        body.dark-mode .btn-darkmode-toggle {
+            background: #232e42;
+            color: #facc15;
+        }
+        body.dark-mode .btn-darkmode-toggle:hover {
+            background: #1e293b;
+            color: #fffde4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-center">
+        <div class="main-card">
+            <div class="main-title">
+                Converter Faktor Koreksi Suhu<br>
+                <span style="font-size:0.93em;">(AS/NZS)</span>
+            </div>
+            <form autocomplete="off">
+                <div class="material-group mb-3">
+                    <button type="button" class="btn btn-material" id="cuBtn">CU</button>
+                    <button type="button" class="btn btn-material" id="alBtn">AL</button>
+                </div>
+                <label for="temperature" class="mb-1">Suhu (<span style="color:#0560fa;">°C</span>)</label>
+                <select class="form-select select-suhu mb-2" id="temperature">
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                    <option value="25">25</option>
+                    <option value="26">26</option>
+                    <option value="27">27</option>
+                    <option value="28">28</option>
+                    <option value="29">29</option>
+                    <option value="30">30</option>
+                    <option value="31">31</option>
+                    <option value="32">32</option>
+                    <option value="33">33</option>
+                    <option value="34">34</option>
+                    <option value="35">35</option>
+                    <option value="36">36</option>
+                    <option value="37">37</option>
+                    <option value="38">38</option>
+                    <option value="39">39</option>
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                    <option value="55">55</option>
+                    <option value="60">60</option>
+                    <option value="65">65</option>
+                    <option value="70">70</option>
+                    <option value="75">75</option>
+                    <option value="80">80</option>
+                    <option value="85">85</option>
+                    <option value="90">90</option>
+                    
+                </select>
+                <div class="result-panel" id="faktorKoreksi">—</div>
+                <div class="info-panel" id="materialInfo"></div>
+            </form>
+            <div class="darkmode-btn-container">
+                <button class="btn-darkmode-toggle" id="darkModeToggle" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
+            </div>
+            <div class="footer">
+                &copy; 2025 Converter AS/NZS by Williyanto Adi
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Data suhu dan faktor koreksi berdasarkan spesifikasi terbaru dari user
+        const koreksiMap = {
+            "CU": {
+    "5": "1.0640",
+    "6": "1.0590",
+    "7": "1.0550",
+    "8": "1.0500",
+    "9": "1.0460",
+    "10": "1.0420",
+    "11": "1.0370",
+    "12": "1.0330",
+    "13": "1.0290",
+    "14": "1.0250",
+    "15": "1.0200",
+    "16": "1.0160",
+    "17": "1.0120",
+    "18": "1.0080",
+    "19": "1.0040",
+    "20": "1.0000",
+    "21": "0.9960",
+    "22": "0.9920",
+    "23": "0.9880",
+    "24": "0.9840",
+    "25": "0.9800",
+    "26": "0.9770",
+    "27": "0.9730",
+    "28": "0.9690",
+    "29": "0.9650",
+    "30": "0.9620",
+    "31": "0.9580",
+    "32": "0.9540",
+    "33": "0.9510",
+    "34": "0.9470",
+    "35": "0.9430",
+    "36": "0.9400",
+    "37": "0.9360",
+    "38": "0.9330",
+    "39": "0.9290",
+    "40": "0.9260",
+    "45": "0.9090",
+    "50": "0.8930",
+    "55": "0.8770",
+    "60": "0.8620",
+    "65": "0.8470",
+    "70": "0.8330",
+    "75": "0.8200",
+    "80": "0.8060",
+    "85": "0.7940",
+    "90": "0.7810"
+            },
+            "AL": {
+    "5": "1.0640",
+    "6": "1.0590",
+    "7": "1.0550",
+    "8": "1.0500",
+    "9": "1.0460",
+    "10": "1.0420",
+    "11": "1.0370",
+    "12": "1.0330",
+    "13": "1.0290",
+    "14": "1.0250",
+    "15": "1.0200",
+    "16": "1.0160",
+    "17": "1.0120",
+    "18": "1.0080",
+    "19": "1.0040",
+    "20": "1.0000",
+    "21": "0.9960",
+    "22": "0.9920",
+    "23": "0.9880",
+    "24": "0.9840",
+    "25": "0.9800",
+    "26": "0.9770",
+    "27": "0.9730",
+    "28": "0.9690",
+    "29": "0.9650",
+    "30": "0.9620",
+    "31": "0.9580",
+    "32": "0.9540",
+    "33": "0.9510",
+    "34": "0.9470",
+    "35": "0.9430",
+    "36": "0.9400",
+    "37": "0.9360",
+    "38": "0.9330",
+    "39": "0.9290",
+    "40": "0.9260",
+    "45": "0.9090",
+    "50": "0.8930",
+    "55": "0.8770",
+    "60": "0.8620",
+    "65": "0.8470",
+    "70": "0.8330",
+    "75": "0.8200",
+    "80": "0.8060",
+    "85": "0.7940",
+    "90": "0.7810"
+            }
+        };
+
+        let selectedMaterial = null;
+        let selectedTemp = document.getElementById('temperature').value;
+        const materialButtons = document.querySelectorAll('.btn-material');
+        const faktorPanel = document.getElementById('faktorKoreksi');
+        const materialInfo = document.getElementById('materialInfo');
+
+        function setFade(el, fade = true) {
+            if(fade) el.classList.add('fade');
+            else el.classList.remove('fade');
+        }
+
+        // Durasi fade harus sinkron dengan CSS transition di atas
+        const fadeDuration = 900; // ms
+
+        function animateResult(newFaktor, newInfo) {
+            setFade(faktorPanel, true);
+            setFade(materialInfo, true);
+            setTimeout(() => {
+                faktorPanel.textContent = newFaktor;
+                materialInfo.textContent = newInfo;
+                setFade(faktorPanel, false);
+                setFade(materialInfo, false);
+            }, fadeDuration / 2); // untuk efek lebih halus
+        }
+
+        function updateResult() {
+            if(selectedMaterial && selectedTemp) {
+                const faktor = koreksiMap[selectedMaterial][selectedTemp] || "—";
+                let matName = '';
+                if(selectedMaterial === "CU") matName = "Copper (Tembaga)";
+                else if(selectedMaterial === "AL") matName = "Aluminium";
+                const info = `Material: ${matName}, Suhu: ${selectedTemp}°C`;
+                animateResult(faktor, info);
+            } else {
+                animateResult("—", "");
+            }
+        }
+
+        materialButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                materialButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                if(this.id === 'cuBtn') selectedMaterial = 'CU';
+                if(this.id === 'alBtn') selectedMaterial = 'AL';
+                updateResult();
+            });
+        });
+
+        document.getElementById('temperature').addEventListener('change', function() {
+            selectedTemp = this.value;
+            updateResult();
+        });
+
+        // DARK MODE TOGGLE
+        const darkBtn = document.getElementById('darkModeToggle');
+        function setDarkMode(state) {
+            if(state) {
+                document.body.classList.add('dark-mode');
+                darkBtn.innerHTML = "🌞";
+                localStorage.setItem('iec_darkmode', "1");
+            } else {
+                document.body.classList.remove('dark-mode');
+                darkBtn.innerHTML = "🌙";
+                localStorage.setItem('iec_darkmode', "0");
+            }
+        }
+        darkBtn.addEventListener('click', function() {
+            setDarkMode(!document.body.classList.contains('dark-mode'));
+        });
+        // Auto load theme
+        window.addEventListener('DOMContentLoaded', function() {
+            let useDark = localStorage.getItem('iec_darkmode');
+            if(useDark === "1" || (useDark === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                setDarkMode(true);
+            } else {
+                setDarkMode(false);
+            }
+            document.getElementById('cuBtn').classList.add('active');
+            selectedMaterial = 'CU';
+            updateResult();
+        });
+    </script>
+</body>
+</html>

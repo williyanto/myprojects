@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Konduktor Resistansi ICEA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style id="style-main">
+    body {
+      background: #f9fafb;
+      min-height: 100vh;
+    }
+    .main-card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 2px 16px 0 rgba(60,72,88,.08);
+      margin-top: 40px;
+      background: #fff;
+      position: relative;
+      max-width: 100%;
+    }
+    .main-card .card-header {
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+      background: #2563eb;
+      font-size: 1.15rem;
+      letter-spacing: .5px;
+      padding: 1rem 1.5rem;
+      position: relative;
+      word-break: break-word;
+    }
+    .main-card .card-body {
+      padding: 2rem 1.5rem 1.5rem 1.5rem;
+    }
+    .main-card .btn-group .btn {
+      border-radius: 20px !important;
+      min-width: 64px;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+    .main-card .btn-group .btn.active,
+    .main-card .btn-group .btn:focus {
+      background: #2563eb;
+      color: #fff;
+      border-color: #2563eb;
+      box-shadow: none;
+    }
+    .main-card .form-select,
+    .main-card .form-control {
+      border-radius: 10px;
+      font-size: 1rem;
+      background: #f4f6fa;
+      border: 1px solid #e5e7eb;
+      min-width: 0;
+    }
+    .main-card .form-select:focus,
+    .main-card .form-control:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 0.2rem rgba(37,99,235,.15);
+    }
+    .main-card .card-footer {
+      border-bottom-left-radius: 15px;
+      border-bottom-right-radius: 15px;
+      background: #f4f6fa;
+      font-size: .97rem;
+      word-break: break-word;
+    }
+    /* Smooth resistansi output */
+    .resistansi-anim {
+      transition: color 0.3s, background 0.3s;
+      font-variant-numeric: tabular-nums;
+      font-size: 1.42rem;
+    }
+    .resistansi-anim.highlight {
+      color: #2563eb;
+      background: #eaf0fb;
+      border-radius: 7px;
+      transition: background 0.3s, color 0.3s;
+    }
+    /* Dark mode icon button - smaller and right aligned under the result */
+    .darkmode-icon-btn {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin: 12px 0 0 0;
+      background: #ffe066;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.11rem;
+      color: #232734;
+      cursor: pointer;
+      padding: 4px 11px 4px 11px;
+      transition: background 0.15s, color 0.15s;
+      outline: none;
+      line-height: 1;
+      font-weight: 600;
+      box-shadow: 0 2px 8px 0 rgba(60,72,88,.10);
+      width: 32px;
+      height: 32px;
+      min-width: unset;
+      min-height: unset;
+    }
+    .darkmode-icon-btn span {
+      font-size: 1.08rem;
+      padding: 0;
+      margin: 0;
+      line-height: 1;
+      display: block;
+    }
+    .darkmode-icon-btn.dark {
+      background: #232734;
+      color: #ffe066 !important;
+      border: 1.5px solid #ffe066;
+      text-shadow: 0 1px 2px #191b24;
+    }
+    .darkmode-icon-btn:active {
+      filter: brightness(97%);
+    }
+    @media (max-width: 768px) {
+      .main-card {
+        margin-top: 22px;
+      }
+      .main-card .card-body {
+        padding: 1.2rem .9rem .9rem .9rem;
+      }
+      .main-card .card-header {
+        padding: .9rem .9rem;
+        font-size: 1.03rem;
+      }
+      .darkmode-icon-btn {
+        font-size: 1.01rem;
+        padding: 2px 7px;
+        margin-top: 8px;
+        width: 26px;
+        height: 26px;
+      }
+      .darkmode-icon-btn span {
+        font-size: .98rem;
+      }
+    }
+    @media (max-width: 480px) {
+      html {
+        font-size: 15px;
+      }
+      .main-card {
+        margin-top: 10px;
+        border-radius: 10px;
+      }
+      .main-card .card-header, .main-card .card-footer {
+        border-radius: 10px 10px 0 0;
+        font-size: .95rem;
+      }
+      .main-card .card-footer {
+        padding: .5rem .55rem;
+        font-size: .91rem;
+      }
+      .main-card .card-body {
+        padding: 1rem .5rem .5rem .5rem;
+      }
+      .main-card .form-select,
+      .main-card .form-control {
+        font-size: .95rem;
+        border-radius: 7px;
+      }
+      .main-card .btn-group .btn {
+        font-size: .97rem;
+        min-width: 50px;
+        padding: .38rem .6rem;
+      }
+    }
+    @media (max-width: 390px) {
+      html {
+        font-size: 13.5px;
+      }
+      .main-card .card-header, .main-card .card-footer {
+        font-size: .87rem;
+      }
+      .main-card .form-select,
+      .main-card .form-control {
+        font-size: .91rem;
+      }
+    }
+  </style>
+  <style id="style-dark" disabled>
+    body {
+      background: #181c24 !important;
+    }
+    .main-card {
+      background: #232734 !important;
+      box-shadow: 0 2px 16px 0 rgba(20,30,60,.18);
+    }
+    .main-card .card-header {
+      background: #1742a0 !important;
+      color: #fff !important;
+    }
+    .main-card .card-body {
+      color: #f3f6ff !important;
+    }
+    .main-card .form-select,
+    .main-card .form-control {
+      background: #232734 !important;
+      color: #f3f6ff !important;
+      border: 1px solid #31374b !important;
+    }
+    .main-card .form-select:focus,
+    .main-card .form-control:focus {
+      border-color: #ffe066 !important;
+      box-shadow: 0 0 0 0.2rem rgba(255,224,102,0.12);
+    }
+    .main-card .btn-group .btn {
+      background: #1a1e29;
+      color: #f3f6ff;
+      border-color: #31374b;
+    }
+    .main-card .btn-group .btn.active,
+    .main-card .btn-group .btn:focus {
+      background: #ffe066 !important;
+      color: #181c24 !important;
+      border-color: #ffe066 !important;
+    }
+    .main-card .card-footer {
+      background: #1a1e29 !important;
+      color: #b1b8c9 !important;
+    }
+    .darkmode-icon-btn {
+      background: #232734 !important;
+      color: #ffe066 !important;
+      border: 1.5px solid #ffe066 !important;
+      text-shadow: 0 1px 2px #191b24;
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="btn btn-outline-secondary mb-3">
+    &larr; Back to Home
+  </a>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+        <div class="card main-card position-relative">
+          <div class="card-header text-white text-center">
+          Spesifikasi Konduktor Resistansi ICEA
+          </div>
+          <div class="card-body">
+            <form>
+              <div class="mb-4 text-center">
+                <div class="btn-group" role="group" aria-label="Jenis Konduktor">
+                  <button type="button" class="btn btn-outline-primary active" id="btnCU" onclick="setJenis('CU')">CU</button>
+                  <button type="button" class="btn btn-outline-primary" id="btnAL" onclick="setJenis('AL')">AL</button>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="spec" class="form-label">Luas Penampang</label>
+                <select id="spec" class="form-select" onchange="updateResistansi()">
+                  <option value="8">8 AWG</option>
+                  <option value="7">7 AWG</option>
+                  <option value="6">6 AWG</option>
+                  <option value="5">5 AWG</option>
+                  <option value="4">4 AWG</option>
+                  <option value="3">3 AWG</option>
+                  <option value="2">2 AWG</option>
+                  <option value="1">1 AWG</option>
+                  <option value="1/0">1/0 AWG</option>
+                  <option value="2/0">2/0 AWG</option>
+                  <option value="3/0">3/0 AWG</option>
+                  <option value="4/0">4/0 AWG</option>
+                  <option value="250">250 KCMIL</option>
+                  <option value="300">300 KCMIL</option>
+                  <option value="350">350 KCMIL</option>
+                  <option value="400">400 KCMIL</option>
+                  <option value="450">450 KCMIL</option>
+                  <option value="500">500 KCMIL</option>
+                  <option value="550">550 KCMIL</option>
+                  <option value="600">600 KCMIL</option>
+                  <option value="650">650 KCMIL</option>
+                  <option value="700">700 KCMIL</option>
+                  <option value="750">750 KCMIL</option>
+                  <option value="800">800 KCMIL</option>
+                  <option value="900">900 KCMIL</option>
+                  <option value="1000">1000 KCMIL</option>
+                  <option value="1100">1100 KCMIL</option>
+                  <option value="1200">1200 KCMIL</option>
+                  <option value="1250">1250 KCMIL</option>
+                  <option value="1300">1300 KCMIL</option>
+                  <option value="1400">1400 KCMIL</option>
+                  <option value="1500">1500 KCMIL</option>
+                  <option value="1600">1600 KCMIL</option>
+                  <option value="1700">1700 KCMIL</option>
+                  <option value="1750">1750 KCMIL</option>
+                </select>
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Resistansi Maksimal (Ω/km)</label>
+                <input type="text" id="resistansi" class="form-control text-center fw-bold resistansi-anim" readonly>
+              </div>
+              <!-- DARK MODE ICON BUTTON placed here, right aligned -->
+              <div class="d-flex justify-content-end">
+                <button type="button" id="darkModeIconBtn" class="darkmode-icon-btn" onclick="toggleDarkMode()" title="Ganti mode terang/gelap">
+                  <span id="darkModeIcon">🌙</span>
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer text-center">
+            <span class="text-muted">© 2025 American Standard by Williyanto Adi v1.28</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Data resistansi berdasarkan jenis konduktor dan ukuran
+    const resistansiData = {
+      "CU": {
+        "8": "0.66504",
+  "7": "0.52938",
+  "6": "0.41922",
+  "5": "0.33150",
+  "4": "0.26316",
+  "3": "0.20910",
+  "2": "0.16524",
+  "1": "0.13158",
+  "1/0": "0.10404",
+  "2/0": "0.08262",
+  "3/0": "0.06548",
+  "4/0": "0.05202",
+  "250": "0.04396",
+  "300": "0.03672",
+  "350": "0.03142",
+  "400": "0.02744",
+  "450": "0.02448",
+  "500": "0.02203",
+  "550": "0.01999",
+  "600": "0.01836",
+  "650": "0.01693",
+  "700": "0.01571",
+  "750": "0.01469",
+  "800": "0.01377",
+  "900": "0.01224",
+  "1000": "0.01102",
+  "1100": "0.01001",
+  "1200": "0.00917",
+  "1250": "0.00880",
+  "1300": "0.00847",
+  "1400": "0.00786",
+  "1500": "0.00733",
+  "1600": "0.00687",
+  "1700": "0.00647",
+  "1750": "0.00628"
+      },
+      "AL": {
+  "8": "1.0914",
+  "7": "0.8680",
+  "6": "0.6885",
+  "5": "0.5447",
+  "4": "0.4325",
+  "3": "0.3427",
+  "2": "0.2713",
+  "1": "0.2152",
+  "1/0": "0.1714",
+  "2/0": "0.1357",
+  "3/0": "0.1071",
+  "4/0": "0.0853",
+  "250": "0.0721",
+  "300": "0.0602",
+  "350": "0.0515",
+  "400": "0.0451",
+  "450": "0.0401",
+  "500": "0.0361",
+  "550": "0.0327",
+  "600": "0.0301",
+  "650": "0.0277",
+  "700": "0.0258",
+  "750": "0.0241",
+  "800": "0.0225",
+  "900": "0.0200",
+  "1000": "0.0181",
+  "1100": "0.0164",
+  "1200": "0.0150",
+  "1250": "0.0144",
+  "1300": "0.0139",
+  "1400": "0.0129",
+  "1500": "0.0120",
+  "1600": "0.0113",
+  "1700": "0.0106",
+  "1750": "0.0103"
+      }
+    };
+
+    let jenisSaatIni = "CU";
+
+    function setJenis(jenis) {
+      jenisSaatIni = jenis;
+      document.getElementById('btnCU').classList.remove('active');
+      document.getElementById('btnAL').classList.remove('active');
+      document.getElementById('btn' + jenis).classList.add('active');
+      updateResistansi();
+    }
+
+    function formatResistansi(nilai) {
+      if (nilai === "-" || nilai === "" || nilai === undefined) return nilai;
+      if (typeof nilai === "string") {
+        if (/^0\./.test(nilai)) {
+          let desimal = nilai.split(".")[1] || "";
+          if (desimal.length < 3) return Number(nilai).toFixed(3);
+          return nilai;
+        }
+        return nilai;
+      }
+      let valNum = Number(nilai);
+      if (valNum < 1) return valNum.toFixed(3);
+      if (valNum < 10) return valNum % 1 === 0 ? valNum.toFixed(0) : valNum.toFixed(2);
+      return valNum % 1 === 0 ? valNum.toFixed(0) : valNum.toFixed(1);
+    }
+
+    // Smooth transition animation for resistansi
+    function animateResistansi(newVal) {
+      const resistansiInput = document.getElementById('resistansi');
+      const animClass = 'highlight';
+      // Only animate when value changes
+      if (resistansiInput.value !== newVal) {
+        resistansiInput.classList.add(animClass);
+        setTimeout(() => {
+          resistansiInput.classList.remove(animClass);
+        }, 350); // match transition duration
+      }
+      resistansiInput.value = newVal;
+    }
+
+    function updateResistansi() {
+      const ukuran = document.getElementById('spec').value;
+      let nilai = resistansiData[jenisSaatIni][ukuran];
+      animateResistansi(formatResistansi(nilai));
+    }
+
+    // DARK MODE LOGIC
+    function toggleDarkMode() {
+      const styleDark = document.getElementById('style-dark');
+      const btn = document.getElementById('darkModeIconBtn');
+      const icon = document.getElementById('darkModeIcon');
+      const isDark = !styleDark.disabled;
+      styleDark.disabled = isDark;
+      if (!isDark) {
+        btn.classList.add('dark');
+        icon.textContent = "☀️";
+        localStorage.setItem('konduktorDarkMode', '1');
+      } else {
+        btn.classList.remove('dark');
+        icon.textContent = "🌙";
+        localStorage.removeItem('konduktorDarkMode');
+      }
+    }
+
+    // Inisialisasi dark mode sesuai preferensi user
+    document.addEventListener('DOMContentLoaded', function() {
+      updateResistansi();
+      // Cek preferensi dark mode
+      const isDark = localStorage.getItem('konduktorDarkMode') === '1';
+      const btn = document.getElementById('darkModeIconBtn');
+      const icon = document.getElementById('darkModeIcon');
+      document.getElementById('style-dark').disabled = !isDark;
+      if (isDark) {
+        btn.classList.add('dark');
+        icon.textContent = "☀️";
+      } else {
+        btn.classList.remove('dark');
+        icon.textContent = "🌙";
+      }
+    });
+  </script>
+</body>
+</html>

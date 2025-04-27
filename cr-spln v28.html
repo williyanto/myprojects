@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Spesifikasi Konduktor Resistansi SPLN AAAC/AAAC-S</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f9fafb;
+      min-height: 100vh;
+    }
+    .main-card {
+      border: none;
+      border-radius: 22px;
+      box-shadow: 0 2px 16px 0 rgba(60,72,88,.09);
+      margin: 32px auto 0 auto;
+      background: #fff;
+      max-width: 410px;
+      padding: 0;
+      position: relative;
+      transition: background 0.35s;
+    }
+    .main-card .card-header {
+      border-top-left-radius: 22px;
+      border-top-right-radius: 22px;
+      background: #2563eb;
+      color: #fff;
+      font-size: 1.23rem;
+      letter-spacing: .1px;
+      padding: 1.10rem 1.5rem .95rem 1.5rem;
+      font-weight: 500;
+      text-align: center;
+      border-bottom: none;
+    }
+    .main-card .card-body {
+      padding: 1.4rem 1.3rem 1.3rem 1.3rem;
+    }
+    .switch-group {
+      display: flex;
+      gap: 0.1rem;
+      justify-content: center;
+      margin-bottom: 1.2rem;
+    }
+    .switch-btn {
+      border: 1.9px solid #2563eb;
+      background: #fff;
+      color: #2563eb;
+      border-radius: 22px;
+      padding: .38rem 1.45rem;
+      font-size: 1.13rem;
+      font-weight: 500;
+      line-height: 1.2;
+      transition: background .22s, color .22s, box-shadow .15s;
+      box-shadow: none;
+      outline: none;
+      cursor: pointer;
+    }
+    .switch-btn.active {
+      background: #2563eb;
+      color: #fff;
+      box-shadow: 0 2px 8px 0 rgba(60,72,88,.10);
+    }
+    .input-group-label {
+      margin-bottom: .55rem;
+      font-size: 1.09rem;
+      font-weight: 400;
+    }
+    .custom-select,
+    .custom-result {
+      border-radius: 13px;
+      border: none;
+      background: #f2f4fa;
+      font-size: 1.07rem;
+      padding: .7rem 1rem;
+      margin-bottom: 1.03rem;
+      transition: background .2s;
+      width: 100%;
+      outline: none;
+      box-shadow: none;
+    }
+    .custom-select:focus {
+      background: #eaf0fb;
+      border: none;
+      box-shadow: 0 0 0 0.16rem rgba(37,99,235,.10);
+    }
+    .custom-result {
+      font-weight: 700;
+      font-size: 1.29rem;
+      text-align: center;
+      margin-bottom: 0.85rem;
+      color: #232734;
+    }
+    .info-detail {
+      background: #f8fafc;
+      border-radius: 11px;
+      font-size: 1.01rem;
+      padding: .55rem 1rem;
+      margin-bottom: 1.1rem;
+      color: #334155;
+      border: 1px solid #e5e7eb;
+      text-align: center;
+      transition: background .2s, color .2s;
+    }
+    body.dark .info-detail {
+      background: #232734 !important;
+      color: #ffe066 !important;
+      border-color: #31374b;
+    }
+    .main-card .card-footer {
+      border-bottom-left-radius: 22px;
+      border-bottom-right-radius: 22px;
+      background: #f4f7fa;
+      font-size: 1.01rem;
+      font-weight: 400;
+      color: #6b7280;
+      padding: .88rem 1.4rem;
+      border-top: none;
+      text-align: center;
+    }
+    .darkmode-icon-btn {
+      position: absolute;
+      right: 28px;
+      bottom: 52px;
+      background: #ffe066;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.33rem;
+      color: #232734;
+      cursor: pointer;
+      padding: 7px 10px 7px 10px;
+      transition: background 0.14s, color 0.14s;
+      outline: none;
+      line-height: 1;
+      box-shadow: 0 2px 8px 0 rgba(60,72,88,.13);
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    .darkmode-icon-btn.dark {
+      background: #232734;
+      color: #ffe066 !important;
+      border: 1.5px solid #ffe066;
+      text-shadow: 0 1px 2px #191b24;
+    }
+    @media (max-width: 470px) {
+      .main-card {
+        max-width: 97vw;
+        border-radius: 15px;
+      }
+      .main-card .card-header,
+      .main-card .card-footer {
+        border-radius: 15px 15px 0 0;
+        font-size: 1.01rem;
+      }
+      .darkmode-icon-btn {
+        right: 12px;
+        bottom: 46px;
+        font-size: 1.06rem;
+        width: 29px;
+        height: 29px;
+      }
+    }
+    body.dark {
+      background: #181c24 !important;
+    }
+    body.dark .main-card {
+      background: #232734 !important;
+      box-shadow: 0 2px 16px 0 rgba(20,30,60,.18);
+    }
+    body.dark .main-card .card-header {
+      background: #1742a0 !important;
+      color: #fff !important;
+    }
+    body.dark .main-card .custom-select,
+    body.dark .main-card .custom-result {
+      background: #232734 !important;
+      color: #ffe066 !important;
+    }
+    body.dark .main-card .custom-select:focus {
+      background: #2b3142 !important;
+    }
+    body.dark .main-card .card-footer {
+      background: #1a1e29 !important;
+      color: #b1b8c9 !important;
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="btn btn-outline-secondary mb-3">
+    &larr; Back to Home
+  </a>
+  <div class="main-card">
+    <div class="card-header">
+      Spesifikasi Konduktor Resistansi SPLN AAAC/AAAC-S
+    </div>
+    <div class="card-body">
+      <div class="switch-group mb-3">
+        <button type="button" class="switch-btn active" id="btnAAAC" onclick="setJenis('AAAC')">AAAC</button>
+        <button type="button" class="switch-btn" id="btnACSR" onclick="setJenis('ACSR')">ACSR</button>
+      </div>
+      <div class="mb-2">
+        <div class="input-group-label">Luas Penampang</div>
+        <select id="spec" class="custom-select" onchange="updateResistansi()">
+          <option value="16">16 mm²</option>
+          <option value="25">25 mm²</option>
+          <option value="35">35 mm²</option>
+          <option value="50_wire_7">50 mm² (Wire 7)</option>
+          <option value="50_wire_15">50 mm² (Wire 15)</option>
+          <option value="55">55 mm²</option>
+          <option value="70">70 mm²</option>
+          <option value="95">95 mm²</option>
+          <option value="100">100 mm²</option>
+          <option value="120">120 mm²</option>
+          <option value="150_wire_19">150 mm² (Wire 19)</option>
+          <option value="150_wire_37">150 mm² (Wire 37)</option>
+          <option value="185">185 mm²</option>
+          <option value="240_wire_19">240 mm² (Wire 19)</option>
+          <option value="240_wire_61">240 mm² (Wire 61)</option>
+          <option value="300">300 mm²</option>
+          <option value="400">400 mm²</option>
+          <option value="500">500 mm²</option>
+          <option value="630">630 mm²</option>
+          <option value="800">800 mm²</option>
+          <option value="1000">1000 mm²</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <div class="input-group-label">Resistansi Maksimal (Ω/km)</div>
+        <div id="resistansi" class="custom-result">1.955</div>
+      </div>
+      <div id="info-detail" class="info-detail">
+        16 mm² Jumlah 7/1,75 – Diameter: 5,25 mm²
+      </div>
+      <button type="button" id="darkModeIconBtn" class="darkmode-icon-btn" onclick="toggleDarkMode()" title="Ganti mode terang/gelap">
+        <span id="darkModeIcon">🌙</span>
+      </button>
+    </div>
+    <div class="card-footer">
+      © 2025 SPLN Standard by Williyanto Adi v1.28
+    </div>
+  </div>
+  <script>
+    // Data resistansi SPLN
+    const resistansiData = {
+      "AAAC": {
+        "16": "1.955",
+        "25": "1.183",
+        "35": "0.958",
+        "50_wire_7": "0.665",
+        "50_wire_15": "0.724",
+        "55": "0.567",
+        "70": "0.438",
+        "95": "0.355",
+        "100": "0.332",
+        "120": "0.293",
+        "150_wire_19": "0.210",
+        "150_wire_37": "0.225",
+        "185": "0.183",
+        "240_wire_19": "0.137",
+        "240_wire_61": "0.139",
+        "300": "0.111",
+        "400": "0.077",
+        "500": "0.066",
+        "630": "0.052",
+        "800": "0.044",
+        "1000": "0.033"
+      },
+      "ACSR": {
+        // Contoh data dummy, silakan ganti sesuai tabel SPLN ACSR jika perlu
+        "16": "2.120",
+        "25": "1.260",
+        "35": "1.010",
+        "50_wire_7": "0.710",
+        "50_wire_15": "0.760",
+        "55": "0.580",
+        "70": "0.445",
+        "95": "0.360",
+        "100": "0.340",
+        "120": "0.300",
+        "150_wire_19": "0.215",
+        "150_wire_37": "0.230",
+        "185": "0.188",
+        "240_wire_19": "0.141",
+        "240_wire_61": "0.143",
+        "300": "0.113",
+        "400": "0.078",
+        "500": "0.068",
+        "630": "0.053",
+        "800": "0.045",
+        "1000": "0.034"
+      }
+    };
+
+    // Data diameter berdasarkan penampang dan wire type
+    const diameterData = {
+      "16": "5,25",
+      "25": "6,75",
+      "35": "7,50",
+      "50_wire_7": "9,0",
+      "50_wire_15": "8,75",
+      "55": "9,75",
+      "70": "11,25",
+      "95": "12,5",
+      "100": "12,75",
+      "120": "13,75",
+      "150_wire_19": "16,25",
+      "150_wire_37": "15,75",
+      "185": "17,5",
+      "240_wire_19": "20,0",
+      "240_wire_61": "20,2",
+      "300": "22,5",
+      "400": "27",
+      "500": "29,25",
+      "630": "33,0",
+      "800": "35,75",
+      "1000": "41,25"
+    };
+
+    // Data jumlah wire berdasarkan penampang dan wire type
+    const wireData = {
+      "16": "7/1,75",
+      "25": "7/2,25",
+      "35": "7/2,5",
+      "50_wire_7": "Wire 7/3,0",
+      "50_wire_15": "Wire 19/1,75",
+      "55": "7/3,25",
+      "70": "19/2,25",
+      "95": "19/2,5",
+      "100": "7/4,25",
+      "120": "19/2,75",
+      "150_wire_19": "Wire 19/3,25",
+      "150_wire_37": "Wire 37/2,25",
+      "185": "37/2,5",
+      "240_wire_19": "Wire 19/4,0",
+      "240_wire_61": "Wire 61/2,25",
+      "300": "61/2,5",
+      "400": "61/3,0",
+      "500": "61/3,25",
+      "630": "91/3,0",
+      "800": "91/3,25",
+      "1000": "91/3,75"
+    };
+
+    let jenisSaatIni = "AAAC";
+
+    function setJenis(jenis) {
+      jenisSaatIni = jenis;
+      // Remove all .active
+      document.getElementById('btnAAAC').classList.remove('active');
+      document.getElementById('btnACSR').classList.remove('active');
+      // Add active to the selected
+      document.getElementById('btn' + jenis).classList.add('active');
+      updateResistansi();
+    }
+
+    function updateResistansi() {
+      const ukuran = document.getElementById('spec').value;
+      let nilai = resistansiData[jenisSaatIni][ukuran] || '-';
+      let wire = wireData[ukuran] || '-';
+      let diameter = diameterData[ukuran] || '-';
+      document.getElementById('resistansi').textContent = nilai;
+      document.getElementById('info-detail').textContent =
+        `${document.getElementById('spec').options[document.getElementById('spec').selectedIndex].text} Jumlah ${wire} – Diameter: ${diameter} mm²`;
+    }
+
+    // Dark mode logic
+    function toggleDarkMode() {
+      const htmlBody = document.body;
+      const btn = document.getElementById('darkModeIconBtn');
+      const icon = document.getElementById('darkModeIcon');
+      const isDark = htmlBody.classList.contains('dark');
+      if (!isDark) {
+        htmlBody.classList.add('dark');
+        btn.classList.add('dark');
+        icon.textContent = "☀️";
+        localStorage.setItem('splnDarkMode', '1');
+      } else {
+        htmlBody.classList.remove('dark');
+        btn.classList.remove('dark');
+        icon.textContent = "🌙";
+        localStorage.removeItem('splnDarkMode');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      updateResistansi();
+      // Cek preferensi dark mode
+      const isDark = localStorage.getItem('splnDarkMode') === '1';
+      const btn = document.getElementById('darkModeIconBtn');
+      const icon = document.getElementById('darkModeIcon');
+      if (isDark) {
+        document.body.classList.add('dark');
+        btn.classList.add('dark');
+        icon.textContent = "☀️";
+      } else {
+        document.body.classList.remove('dark');
+        btn.classList.remove('dark');
+        icon.textContent = "🌙";
+      }
+    });
+  </script>
+</body>
+</html>

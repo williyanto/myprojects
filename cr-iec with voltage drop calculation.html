@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Konversi Spesifikasi Konduktor Resistansi IEC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f9fafb;
+      min-height: 100vh;
+    }
+    .main-card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 2px 16px 0 rgba(60,72,88,.08);
+      margin-top: 40px;
+      background: #fff;
+    }
+    .main-card .card-header {
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+      background: #2563eb;
+      font-size: 1.15rem;
+      letter-spacing: .5px;
+      padding: 1rem 1.5rem;
+    }
+    .main-card .card-body {
+      padding: 2rem 1.5rem 1.5rem 1.5rem;
+    }
+    .main-card .btn-group .btn {
+      border-radius: 20px !important;
+      min-width: 64px;
+      font-weight: 500;
+    }
+    .main-card .btn-group .btn.active,
+    .main-card .btn-group .btn:focus {
+      background: #2563eb;
+      color: #fff;
+      border-color: #2563eb;
+      box-shadow: none;
+    }
+    .main-card .form-select,
+    .main-card .form-control {
+      border-radius: 10px;
+      font-size: 1rem;
+      background: #f4f6fa;
+      border: 1px solid #e5e7eb;
+    }
+    .main-card .form-select:focus,
+    .main-card .form-control:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 0.2rem rgba(37,99,235,.15);
+    }
+    .main-card .card-footer {
+      border-bottom-left-radius: 15px;
+      border-bottom-right-radius: 15px;
+      background: #f4f6fa;
+      font-size: .97rem;
+    }
+    .calculation-section {
+      border-radius: 12px;
+      background: #f4f6fa;
+      padding: 1.2rem 1rem 1.5rem 1rem;
+      margin-bottom: 1.5rem;
+      margin-top: 0.5rem;
+    }
+    .calculation-section label {
+      font-weight: 500;
+    }
+    .calculation-section .form-control, .calculation-section .form-select {
+      background: #fff;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .calculation-section .result-box {
+      background: #e0e7ef;
+      border-radius: 7px;
+      padding: 0.8rem;
+      margin-top: 0.7rem;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #274785;
+    }
+    .calculation-section .desc {
+      font-size: 0.97rem;
+      color: #636a74;
+    }
+    @media (max-width: 576px) {
+      .main-card {
+        margin-top: 18px;
+      }
+      .main-card .card-body {
+        padding: 1.2rem .9rem .9rem .9rem;
+      }
+      .main-card .card-header {
+        padding: .8rem .9rem;
+      }
+      .main-card .card-footer {
+        padding: .6rem .9rem;
+      }
+      .calculation-section {
+        padding: 1rem .6rem 1.2rem .6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+        <div class="card main-card">
+          <div class="card-header text-white text-center">
+            Konversi Spesifikasi Konduktor Resistansi IEC
+          </div>
+          <div class="card-body">
+            <!-- PERHITUNGAN LAIN START -->
+            <div class="calculation-section mb-4">
+              <div class="mb-2 text-center" style="font-size: 1.08rem;">
+                <b>Perhitungan Lain</b>
+              </div>
+              <div class="mb-3 desc">
+                Hitung <b>penurunan tegangan</b> (Voltage Drop) dan <b>arus maksimum</b> berdasarkan resistansi konduktor.<br>
+                <b>Rumus penurunan tegangan:</b> <code>Vdrop = I × R × L / 1000</code>
+                <br>(Vdrop dalam volt, I dalam ampere, R dalam Ω/km, L dalam meter)
+              </div>
+              <form id="otherCalcForm" oninput="doOtherCalcs()">
+                <div class="row g-2">
+                  <div class="col-12 col-sm-6">
+                    <label for="calc_length" class="form-label">Panjang Kabel (meter)</label>
+                    <input type="number" min="0" step="any" id="calc_length" class="form-control" value="100">
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <label for="calc_current" class="form-label">Arus (Ampere)</label>
+                    <input type="number" min="0" step="any" id="calc_current" class="form-control" value="10">
+                  </div>
+                  <div class="col-12 col-sm-6 mt-3">
+                    <label for="calc_resistance" class="form-label">Resistansi (Ω/km)</label>
+                    <input type="text" id="calc_resistance" class="form-control" readonly>
+                  </div>
+                  <div class="col-12 col-sm-6 mt-3">
+                    <label for="calc_voltage" class="form-label">Tegangan Sumber (volt)</label>
+                    <input type="number" min="0" step="any" id="calc_voltage" class="form-control" value="220">
+                  </div>
+                </div>
+                <div class="result-box" id="vdrop_result">
+                  Penurunan Tegangan: <b id="vdrop_value">-</b> V (<span id="vdrop_persentase">-</span>%)
+                </div>
+                <div class="result-box" id="imax_result">
+                  Perkiraan Arus Maksimum (20°C, <span id="imax_rule">3%</span> drop): <b id="imax_value">-</b> A
+                </div>
+              </form>
+            </div>
+            <!-- PERHITUNGAN LAIN END -->
+            <form>
+              <div class="mb-4 text-center">
+                <div class="btn-group" role="group" aria-label="Jenis Konduktor">
+                  <button type="button" class="btn btn-outline-primary active" id="btnCU" onclick="setJenis('CU')">CU</button>
+                  <button type="button" class="btn btn-outline-primary" id="btnAL" onclick="setJenis('AL')">AL</button>
+                  <button type="button" class="btn btn-outline-primary" id="btnTCU" onclick="setJenis('TCU')">TCU</button>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="spec" class="form-label">Spesifikasi Konduktor</label>
+                <select id="spec" class="form-select" onchange="updateResistansi(); doOtherCalcs();">
+                  <option value="0.5">0,5 mm²</option>
+                  <option value="0.75">0,75 mm²</option>
+                  <option value="1">1 mm²</option>
+                  <option value="1.5">1,5 mm²</option>
+                  <option value="2.5">2,5 mm²</option>
+                  <option value="4">4 mm²</option>
+                  <option value="6">6 mm²</option>
+                  <option value="10">10 mm²</option>
+                  <option value="16">16 mm²</option>
+                  <option value="25">25 mm²</option>
+                  <option value="35">35 mm²</option>
+                  <option value="50">50 mm²</option>
+                  <option value="70">70 mm²</option>
+                  <option value="95">95 mm²</option>
+                  <option value="120">120 mm²</option>
+                  <option value="150">150 mm²</option>
+                  <option value="185">185 mm²</option>
+                  <option value="240">240 mm²</option>
+                  <option value="300">300 mm²</option>
+                  <option value="400">400 mm²</option>
+                  <option value="500">500 mm²</option>
+                </select>
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Resistansi (Ω/km)</label>
+                <input type="text" id="resistansi" class="form-control text-center fw-bold" readonly>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer text-center">
+            <span class="text-muted">© 2025 Converter Konduktor Resistansi IEC by Williyanto Adi</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Data resistansi berdasarkan jenis konduktor dan ukuran, gunakan string agar presisi ditampilkan apa adanya
+    const resistansiData = {
+      "CU": {
+        "0.5": "36",
+        "0.75": "24.5",
+        "1": "18.1",
+        "1.5": "12.1",
+        "2.5": "7.41",
+        "4": "4.61",
+        "6": "3.08",
+        "10": "1.83",
+        "16": "1.15",
+        "25": "0.727",
+        "35": "0.524",
+        "50": "0.387",
+        "70": "0.268",
+        "95": "0.193",
+        "120": "0.153",
+        "150": "0.124",
+        "185": "0.0991",
+        "240": "0.0754",
+        "300": "0.0601",
+        "400": "0.047",
+        "500": "0.0366"
+      },
+      "AL": {
+        "0.5": "-",
+        "0.75": "-",
+        "1": "-",
+        "1.5": "-",
+        "2.5": "-",
+        "4": "7.41",
+        "6": "4.61",
+        "10": "3.08",
+        "16": "1.91",
+        "25": "1.2",
+        "35": "0.868",
+        "50": "0.641",
+        "70": "0.443",
+        "95": "0.32",
+        "120": "0.253",
+        "150": "0.206",
+        "185": "0.164",
+        "240": "0.125",
+        "300": "0.100",
+        "400": "0.0778",
+        "500": "0.0605"
+      },
+      "TCU": {
+        "0.5": "36.7",
+        "0.75": "24.8",
+        "1": "18.2",
+        "1.5": "12.2",
+        "2.5": "7.56",
+        "4": "4.7",
+        "6": "3.11",
+        "10": "1.84",
+        "16": "1.16",
+        "25": "0.734",
+        "35": "0.529",
+        "50": "0.391",
+        "70": "0.27",
+        "95": "0.195",
+        "120": "0.154",
+        "150": "0.126",
+        "185": "0.100",
+        "240": "0.0762",
+        "300": "0.0607",
+        "400": "0.0475",
+        "500": "0.0369"
+      }
+    };
+
+    let jenisSaatIni = "CU";
+
+    function setJenis(jenis) {
+      jenisSaatIni = jenis;
+      document.getElementById('btnCU').classList.remove('active');
+      document.getElementById('btnAL').classList.remove('active');
+      document.getElementById('btnTCU').classList.remove('active');
+      document.getElementById('btn' + jenis).classList.add('active');
+      updateResistansi();
+      doOtherCalcs();
+    }
+
+    function formatResistansi(nilai) {
+      if (nilai === "-" || nilai === "" || nilai === undefined) return nilai;
+      if (typeof nilai === "string") {
+        if (/^0\./.test(nilai)) {
+          let desimal = nilai.split(".")[1] || "";
+          if (desimal.length < 3) return Number(nilai).toFixed(3);
+          return nilai;
+        }
+        return nilai;
+      }
+      let valNum = Number(nilai);
+      if (valNum < 1) return valNum.toFixed(3);
+      if (valNum < 10) return valNum % 1 === 0 ? valNum.toFixed(0) : valNum.toFixed(2);
+      return valNum % 1 === 0 ? valNum.toFixed(0) : valNum.toFixed(1);
+    }
+
+    function updateResistansi() {
+      const ukuran = document.getElementById('spec').value;
+      let nilai = resistansiData[jenisSaatIni][ukuran];
+      document.getElementById('resistansi').value = formatResistansi(nilai);
+      document.getElementById('calc_resistance').value = formatResistansi(nilai);
+    }
+
+    // --- PERHITUNGAN LAIN LOGIC ---
+    function doOtherCalcs() {
+      // Ambil nilai input
+      const panjang = parseFloat(document.getElementById('calc_length').value.replace(",","."));
+      const arus = parseFloat(document.getElementById('calc_current').value.replace(",","."));
+      const tegangan = parseFloat(document.getElementById('calc_voltage').value.replace(",","."));
+      const ukuran = document.getElementById('spec').value;
+      const rStr = resistansiData[jenisSaatIni][ukuran];
+      let r = parseFloat(rStr);
+      // Output resistansi ke box perhitungan lain
+      document.getElementById('calc_resistance').value = formatResistansi(rStr);
+
+      let vdrop = "-";
+      let vdrop_persen = "-";
+      let imax = "-";
+      if (!isNaN(r) && !isNaN(panjang) && !isNaN(arus) && !isNaN(tegangan) && tegangan > 0) {
+        // Penurunan tegangan (V)
+        vdrop = arus * r * panjang / 1000;
+        // Persentase penurunan
+        vdrop_persen = vdrop / tegangan * 100;
+        // Arus maksimum agar drop <= 3% tegangan
+        imax = (0.03 * tegangan * 1000) / (r * panjang);
+        // Format
+        vdrop = vdrop.toFixed(3);
+        vdrop_persen = vdrop_persen.toFixed(2);
+        imax = imax.toFixed(2);
+      }
+      document.getElementById('vdrop_value').innerText = vdrop;
+      document.getElementById('vdrop_persentase').innerText = vdrop_persen;
+      document.getElementById('imax_value').innerText = imax;
+    }
+
+    // --- END PERHITUNGAN LAIN LOGIC ---
+
+    document.addEventListener('DOMContentLoaded', function() {
+      updateResistansi();
+      doOtherCalcs();
+      // Bind manual update if user changes input on "main" resistansi
+      document.getElementById('calc_length').addEventListener('input', doOtherCalcs);
+      document.getElementById('calc_current').addEventListener('input', doOtherCalcs);
+      document.getElementById('calc_voltage').addEventListener('input', doOtherCalcs);
+    });
+  </script>
+</body>
+</html>
