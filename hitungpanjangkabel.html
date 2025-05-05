@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perhitungan Panjang Kabel dalam Drum</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            background: #f8fafc url('https://www.transparenttextures.com/patterns/symphony.png');
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 570px;
+            margin: 40px auto 0 auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12), 0 1.5px 4px rgba(0,0,0,0.07);
+            padding: 40px 30px 30px 30px;
+        }
+        h2 {
+            font-weight: 700;
+            font-size: 1.9rem;
+            color: #274472;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-family: inherit;
+        }
+        .form-check-label {
+            font-size: 1.07rem;
+            color: #1e293b;
+            padding-left: 6px;
+        }
+        .form-check-input:checked + .form-check-label {
+            color: #274472;
+            font-weight: 600;
+        }
+        .form-group, .form-group-diameter, .form-group-keliling {
+            margin-bottom: 18px;
+        }
+        .input-group-text {
+            background: #e0e7ef;
+            border: none;
+        }
+        .form-control, .custom-select {
+            border-radius: 8px !important;
+            font-size: 1.07rem;
+            border: 1.5px solid #cdd8e7;
+            box-shadow: none;
+            transition: border-color .2s;
+            font-family: inherit;
+        }
+        .form-control:focus, .custom-select:focus {
+            border-color: #274472;
+            box-shadow: 0 0 0 2px #dbeafe;
+        }
+        label.sr-only {
+            display: none;
+        }
+        .input-group {
+            align-items: center;
+        }
+        .form-text.text-muted {
+            font-size: 0.96em;
+            margin-top: 2px;
+        }
+        .alert {
+            border-radius: 10px;
+            font-size: 1.08em;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #274472 0%, #5280c5 100%);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(39,68,114,0.07);
+        }
+        .form-check-input {
+            accent-color: #274472;
+            width: 1.1em;
+            height: 1.1em;
+        }
+        .alert {
+            animation: fadeIn .5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px);}
+            to { opacity: 1; transform: none;}
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 28px 7vw 20px 7vw;
+                margin-top: 15px;
+            }
+            h2 {
+                font-size: 1.3rem;
+            }
+            /* Responsive: make input 100% on mobile */
+            .flex-grow-input {
+                flex: 1 1 100%;
+                min-width: 0;
+            }
+            .short-select {
+                width: 70px !important;
+                min-width: 0 !important;
+                max-width: 20vw !important;
+            }
+        }
+        .input-group-text svg {
+            color: #274472;
+        }
+        .alert strong {
+            color: #274472;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        /* Footer styling */
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 18px 0 12px 0;
+            font-size: 1.05rem;
+            color: #678;
+            background: none;
+            margin-top: auto;
+            letter-spacing: 0.5px;
+            font-family: inherit;
+        }
+
+        /* Perpanjang kolom input lebar drum & diameter kabel, pendekkan select satuan */
+        .input-group.flex-long {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+        .flex-grow-input {
+            flex: 1 1 0;
+            min-width: 0;
+        }
+        .short-select {
+            width: 85px !important;
+            min-width: 0 !important;
+            max-width: 100px !important;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container shadow">
+        <h2>
+            Perhitungan Panjang Kabel dalam Drum
+        </h2>
+        <form id="kalkulatorKabel" autocomplete="off">
+            <div class="form-row mb-3">
+                <div class="col-12 d-flex flex-wrap">
+                    <div class="form-check mr-4">
+                        <input type="radio" class="form-check-input" id="pilihDiameter" name="jenisInputDrum" value="diameter" checked onchange="toggleInputDrum()">
+                        <label class="form-check-label" for="pilihDiameter">Diameter Drum</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="pilihKeliling" name="jenisInputDrum" value="keliling" onchange="toggleInputDrum()">
+                        <label class="form-check-label" for="pilihKeliling">Keliling Drum</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-group-diameter">
+                <label for="diameterDrum" class="sr-only">Diameter Drum (meter)</label>
+                <input type="number" class="form-control" id="diameterDrum" step="0.01" placeholder="Diameter Drum (meter)" oninput="hitungPanjang()">
+            </div>
+            <div class="form-group form-group-keliling">
+                <label for="kelilingDrum" class="sr-only">Keliling Drum (meter)</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="kelilingDrum" step="0.01" placeholder="Keliling Drum (meter)" oninput="hitungPanjang()">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="lebarDrum" class="sr-only">Lebar Drum</label>
+                <div class="input-group flex-long">
+                    <input type="number" class="form-control flex-grow-input" id="lebarDrum" step="0.01" placeholder="Lebar Drum" oninput="hitungPanjang()">
+                    <select class="custom-select short-select" id="satuanLebarDrum" onchange="hitungPanjang()">
+                        <option value="m" selected>meter</option>
+                        <option value="cm">cm</option>
+                        <option value="mm">mm</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="nilaiDiameterKabel" class="sr-only">Diameter Kabel</label>
+                <div class="input-group flex-long">
+                    <input type="number" class="form-control flex-grow-input" id="nilaiDiameterKabel" step="0.01" placeholder="Diameter Kabel" oninput="hitungPanjang()">
+                    <select class="custom-select short-select" id="satuanDiameterKabel" onchange="hitungPanjang()">
+                        <option value="mm" selected>mm</option>
+                        <option value="cm">cm</option>
+                        <option value="m">m</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="lilitanTanda" class="font-weight-bold">Hitung Panjang Hingga Lilitan Ke-</label>
+                <input type="number" class="form-control" id="lilitanTanda" min="1" placeholder="Lilitan Ke-" oninput="hitungPanjang()">
+                <small class="form-text text-muted">Kosongkan jika tidak ingin menghitung berdasarkan lilitan.</small>
+            </div>
+            <div class="form-group">
+                <label for="jumlahLayer" class="font-weight-bold">Hitung Panjang Total untuk Layer Penuh</label>
+                <input type="number" class="form-control" id="jumlahLayer" min="1" placeholder="Jumlah Layer" oninput="hitungPanjang()">
+                <small class="form-text text-muted">Kosongkan jika tidak ingin menghitung total layer.</small>
+            </div>
+        </form>
+        <div id="hasil" class="mt-3"></div>
+    </div>
+    <footer>
+        &copy; Williyanto Adi 2025
+    </footer>
+    <script>
+        function toggleInputDrum() {
+            const pilihDiameter = document.getElementById("pilihDiameter");
+            const pilihKeliling = document.getElementById("pilihKeliling");
+            const diameterGroup = document.querySelector(".form-group-diameter");
+            const kelilingGroup = document.querySelector(".form-group-keliling");
+
+            diameterGroup.style.display = pilihDiameter.checked ? "block" : "none";
+            kelilingGroup.style.display = pilihKeliling.checked ? "block" : "none";
+
+            hitungPanjang();
+        }
+
+        function hitungPanjang() {
+            const pilihDiameter = document.getElementById("pilihDiameter").checked;
+            const diameterDrumInput = document.getElementById("diameterDrum");
+            const kelilingDrumInput = document.getElementById("kelilingDrum");
+            const lebarDrumNilai = parseFloat(document.getElementById("lebarDrum").value);
+            const satuanLebarDrum = document.getElementById("satuanLebarDrum").value;
+            const nilaiDiameterKabel = parseFloat(document.getElementById("nilaiDiameterKabel").value);
+            const satuanDiameterKabel = document.getElementById("satuanDiameterKabel").value;
+            const lilitanTandaInput = document.getElementById("lilitanTanda").value;
+            const jumlahLayerInput = document.getElementById("jumlahLayer").value;
+            const hasilDiv = document.getElementById("hasil");
+
+            let diameterDrum;
+            let lebarDrumMeter = lebarDrumNilai;
+
+            switch (satuanLebarDrum) {
+                case "cm":
+                    lebarDrumMeter = lebarDrumNilai / 100;
+                    break;
+                case "mm":
+                    lebarDrumMeter = lebarDrumNilai / 1000;
+                    break;
+                case "m":
+                default:
+                    lebarDrumMeter = lebarDrumNilai;
+                    break;
+            }
+
+            if (pilihDiameter) {
+                diameterDrum = parseFloat(diameterDrumInput.value);
+                if (isNaN(diameterDrum) || diameterDrum <= 0) {
+                    hasilDiv.innerHTML = '<div class="alert alert-danger" role="alert">Mohon masukkan angka yang valid untuk Diameter Drum.</div>';
+                    return;
+                }
+            } else {
+                const kelilingDrum = parseFloat(kelilingDrumInput.value);
+                if (isNaN(kelilingDrum) || kelilingDrum <= 0) {
+                    hasilDiv.innerHTML = '<div class="alert alert-danger" role="alert">Mohon masukkan angka yang valid untuk Keliling Drum.</div>';
+                    return;
+                }
+                diameterDrum = kelilingDrum / Math.PI;
+            }
+
+            if (isNaN(lebarDrumMeter) || lebarDrumMeter <= 0) {
+                hasilDiv.innerHTML = '<div class="alert alert-danger" role="alert">Mohon masukkan angka yang valid untuk Lebar Drum.</div>';
+                return;
+            }
+            if (isNaN(nilaiDiameterKabel) || nilaiDiameterKabel <= 0) {
+                hasilDiv.innerHTML = '<div class="alert alert-danger" role="alert">Mohon masukkan angka yang valid untuk Diameter Kabel.</div>';
+                return;
+            }
+
+            let diameterKabelMeter;
+            switch (satuanDiameterKabel) {
+                case "mm":
+                    diameterKabelMeter = nilaiDiameterKabel / 1000;
+                    break;
+                case "cm":
+                    diameterKabelMeter = nilaiDiameterKabel / 100;
+                    break;
+                case "m":
+                    diameterKabelMeter = nilaiDiameterKabel;
+                    break;
+                default:
+                    diameterKabelMeter = 0;
+                    hasilDiv.innerHTML = '<div class="alert alert-danger" role="alert">Satuan diameter kabel tidak valid.</div>';
+                    return;
+            }
+
+            hasilDiv.innerHTML = ""; // Bersihkan hasil sebelumnya
+
+            // Hitung panjang hingga lilitan tertentu jika diisi
+            if (lilitanTandaInput) {
+                const lilitanTanda = parseInt(lilitanTandaInput);
+                if (!isNaN(lilitanTanda) && lilitanTanda > 0) {
+                    let panjangKabelTanda = 0;
+                    for (let i = 1; i <= lilitanTanda; i++) {
+                        const diameterLilitan = diameterDrum + (i - 1) * diameterKabelMeter;
+                        const kelilingLilitan = Math.PI * diameterLilitan;
+                        panjangKabelTanda += kelilingLilitan;
+                    }
+                    hasilDiv.innerHTML += `<div class="alert alert-info" role="alert">
+                                            Perkiraan panjang kabel hingga lilitan ke-${lilitanTanda} adalah sekitar <strong>${panjangKabelTanda.toFixed(2)} meter</strong>.
+                                        </div>`;
+                } else if (lilitanTandaInput !== "") {
+                    hasilDiv.innerHTML += '<div class="alert alert-warning" role="alert">Nilai lilitan tidak valid.</div>';
+                }
+            }
+
+            // Hitung panjang total untuk sejumlah layer penuh jika diisi
+            if (jumlahLayerInput) {
+                const jumlahLayer = parseInt(jumlahLayerInput);
+                if (!isNaN(jumlahLayer) && jumlahLayer > 0) {
+                    const jumlahLilitanPerLayer = Math.floor(lebarDrumMeter / diameterKabelMeter);
+                    let panjangTotalKabel = 0;
+                    let diameterSaatIni = diameterDrum;
+
+                    for (let layer = 1; layer <= jumlahLayer; layer++) {
+                        let panjangLayer = 0;
+                        for (let i = 0; i < jumlahLilitanPerLayer; i++) {
+                            const diameterLilitan = diameterSaatIni + i * diameterKabelMeter;
+                            const kelilingLilitan = Math.PI * diameterLilitan;
+                            panjangLayer += kelilingLilitan;
+                        }
+                        panjangTotalKabel += panjangLayer;
+                        diameterSaatIni += diameterKabelMeter;
+                    }
+                    hasilDiv.innerHTML += `<div class="alert alert-success" role="alert">
+                                            Perkiraan panjang total kabel untuk ${jumlahLayer} layer penuh adalah sekitar <strong>${panjangTotalKabel.toFixed(2)} meter</strong>.
+                                        </div>`;
+                } else if (jumlahLayerInput !== "") {
+                    hasilDiv.innerHTML += '<div class="alert alert-warning" role="alert">Jumlah layer tidak valid.</div>';
+                }
+            }
+
+            // Jika kedua input (lilitan dan layer) kosong, berikan hasil satu layer
+            const hitungSatuLayer = !lilitanTandaInput && !jumlahLayerInput && !isNaN(diameterDrum) && !isNaN(lebarDrumMeter) && !isNaN(nilaiDiameterKabel) && diameterDrum > 0 && lebarDrumMeter > 0 && nilaiDiameterKabel > 0;
+            if (hitungSatuLayer) {
+                const jumlahLilitanPerLayer = Math.floor(lebarDrumMeter / diameterKabelMeter);
+                let panjangSatuLayer = 0;
+                for (let i = 0; i < jumlahLilitanPerLayer; i++) {
+                    const diameterLilitan = diameterDrum + i * diameterKabelMeter;
+                    const kelilingLilitan = Math.PI * diameterLilitan;
+                    panjangSatuLayer += kelilingLilitan;
+                }
+                hasilDiv.innerHTML += `<div class="alert alert-info" role="alert">
+                                        Perkiraan panjang kabel untuk satu layer penuh adalah sekitar <strong>${panjangSatuLayer.toFixed(2)} meter</strong>.
+                                    </div>`;
+            } else if (!pilihDiameter && isNaN(parseFloat(kelilingDrumInput.value))) {
+                // Pesan error keliling sudah ditangani di awal
+            } else if (pilihDiameter && isNaN(parseFloat(diameterDrumInput.value))) {
+                // Pesan error diameter sudah ditangani di awal
+            } else if (isNaN(lebarDrumMeter) || isNaN(nilaiDiameterKabel)) {
+                hasilDiv.innerHTML = '<div class="alert alert-danger" role="alert">Mohon masukkan angka yang valid untuk Lebar Drum dan Diameter Kabel.</div>';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            toggleInputDrum();
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
