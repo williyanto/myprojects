@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WPROjects</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            border-radius: 15px;
+            overflow: hidden;
+            background: white;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Efek overlay biru transparan saat hover */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 123, 255, 0.4);
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .card-body {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        #toggleDarkMode {
+            position: fixed;
+            bottom: 40px;
+            right: 20px;
+            z-index: 1000;
+            transition: all 0.3s ease-in-out;
+        }
+
+        footer {
+            background: #212529;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 50px;
+            position: relative;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Williyanto Adi Projects</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="under-development.html">Projects1</a></li>
+                    <li class="nav-item"><a class="nav-link" href="under-development.html">Projects2</a></li>
+                    <li class="nav-item"><a class="nav-link" href="under-development.html">Projects3</a></li>
+                    <li class="nav-item"><a class="nav-link" href="under-development.html">Projects4</a></li>
+                    <li class="nav-item"><a class="nav-link" href="under-development.html">Projects5</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row" id="projects-container">
+            <!-- Project cards will be inserted here dynamically -->
+        </div>
+    </div>
+
+    <button id="toggleDarkMode" class="btn btn-outline-dark">
+        🌙 Dark Mode
+    </button>
+
+    <footer>
+        Copyright 2025 | Versi Aplikasi 17.00.6
+    </footer>
+
+    <script>
+        const projects = [
+            { name: "Kalkulator Resistansi Konduktor IEC & SPLN", description: "Aplikasi kalkulator konduktor", link: "calres.html" },
+            { name: "Monitoring Pengisian BBM", description: "Aplikasi untuk monitoring pemakaian BBM", link: "bbm.html" },
+            { name: "Cash Flow", description: "Aplikasi Pengelola keuangan", link: "cashflow.html" },
+            { name: "Spesifikasi Konduktor Resistance", description: "Aplikasi Standar Konduktor Resistansi", link: "indexcr.html" },
+            { name: "Faktor Koreksi Suhu", description: "Aplikasi Faktor Koreksi Suhu.", link: "indexfk.html" },
+            { name: "Hitung panjang kabel di drum", description: "Hitung panjang kabel di dalam drum.", link: "hitungpanjangkabel.html" }
+        ];
+
+        const container = document.getElementById("projects-container");
+
+        projects.forEach(project => {
+            const card = document.createElement("div");
+            card.className = "col-md-4 mb-4";
+            card.innerHTML = `
+                <div class="card shadow-lg h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">${project.name}</h5>
+                        <p class="card-text">${project.description}</p>
+                        <a href="${project.link}" class="btn btn-primary" target="_blank">View on Web</a>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+
+        document.getElementById("toggleDarkMode").addEventListener("click", function () {
+            document.body.classList.toggle("bg-dark");
+            document.body.classList.toggle("text-light");
+        });
+
+        window.addEventListener("scroll", function () {
+            const footer = document.querySelector("footer");
+            const toggleDarkMode = document.getElementById("toggleDarkMode");
+
+            let footerRect = footer.getBoundingClientRect();
+            let windowHeight = window.innerHeight;
+
+            if (footerRect.top < windowHeight - 50) {
+                toggleDarkMode.style.bottom = (footerRect.height + 40) + "px";
+            } else {
+                toggleDarkMode.style.bottom = "40px";
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
