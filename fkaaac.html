@@ -134,19 +134,23 @@
       width: 100%;
       display: block;
     }
+
+    /* --- FIXED DESKTOP FORM ROWS FOR ALL DEVICES --- */
     .form-row {
-      display: flex;
+      display: flex !important;
+      flex-direction: row !important;
       gap: 16px;
       margin-bottom: 16px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap !important;
     }
     .form-group {
-      flex: 1;
+      flex: 1 1 0%;
       display: flex;
       flex-direction: column;
       min-width: 0;
       width: 100%;
     }
+
     .form-label {
       font-size: 0.95rem;
       margin-bottom: 6px;
@@ -252,8 +256,10 @@
       margin-bottom: 12px;
     }
 
+    /* --- REMOVE MOBILE STACKING FOR FORM ROWS --- */
     @media (max-width: 460px) {
-      .form-row { flex-direction: column; gap: 12px; }
+      /* Remove mobile flex-direction: column for form-row */
+      .form-row { flex-direction: row !important; gap: 12px !important; flex-wrap: nowrap !important; }
       .btn-row-bottom { flex-direction: column; gap: 12px; margin-top: 32px;}
       .info-text { font-size: 0.98em; }
       .info-area { padding: 10px 7px 10px 8px; }
@@ -292,7 +298,7 @@
       <div class="form-group">
         <label class="form-label" for="alat">Pembacaan Alat</label>
         <div style="display: flex; gap: 8px;">
-          <input type="text" class="form-input" id="alat" style="flex:1;" />
+          <input type="text" class="form-input" id="alat" style="flex:1;" inputmode="decimal" pattern="[0-9]*" />
           <select class="form-input" id="alat-satuan" style="width:auto;">
             <option value="mohm">mΩ</option>
             <option value="ohm">Ω</option>
@@ -301,14 +307,14 @@
       </div>
       <div class="form-group">
         <label class="form-label" for="panjang">Panjang (Meter)</label>
-        <input type="text" class="form-input" id="panjang" />
+        <input type="text" class="form-input" id="panjang" inputmode="decimal" pattern="[0-9]*" />
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group">
         <label class="form-label" for="suhu">Suhu (°C)</label>
-        <input type="text" class="form-input" id="suhu" />
+        <input type="text" class="form-input" id="suhu" inputmode="decimal" pattern="[0-9]*" />
       </div>
       <div class="form-group">
         <label class="form-label" for="faktor">Faktor Koreksi Suhu</label>
@@ -396,6 +402,23 @@
   </div>
 
   <script>
+    // Membatasi input hanya angka & titik/koma di kolom pembacaan alat, panjang dan suhu
+    function onlyNumberInput(el) {
+      el.addEventListener('input', function() {
+        let val = el.value;
+        val = val.replace(/,/g, '.');
+        val = val.replace(/[^0-9.]/g, '');
+        const parts = val.split('.');
+        if (parts.length > 2) {
+          val = parts[0] + '.' + parts.slice(1).join('');
+        }
+        el.value = val;
+      });
+    }
+    onlyNumberInput(document.getElementById("alat"));
+    onlyNumberInput(document.getElementById("panjang"));
+    onlyNumberInput(document.getElementById("suhu"));
+
     // Info Area Toggle
     const infoArea = document.getElementById("infoArea");
     const infoAreaExpandedContainer = document.getElementById("infoAreaExpandedContainer");
@@ -494,7 +517,6 @@
       document.body.classList.toggle('dark');
       setThemeIcon(document.body.classList.contains('dark'));
     });
-    // Set initial icon
     setThemeIcon(document.body.classList.contains('dark'));
 
     // Data & Kalkulasi
